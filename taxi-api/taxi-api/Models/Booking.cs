@@ -7,6 +7,8 @@ public partial class Booking
 {
     public int Id { get; set; }
 
+    public string? Code { get; set; }
+
     public int? CustomerId { get; set; }
 
     public int? ArivalId { get; set; }
@@ -22,6 +24,8 @@ public partial class Booking
     public decimal? Price { get; set; }
 
     public string? Status { get; set; }
+
+    public bool? HasFull { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
