@@ -11,11 +11,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Cấu hình DbContext
 builder.Services.AddDbContext<TaxiContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'Context' not found.")));
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.")));
 
 // Cấu hình PasswordHasher cho Driver và Admin
 builder.Services.AddScoped<IPasswordHasher<Driver>, PasswordHasher<Driver>>();
 builder.Services.AddScoped<IPasswordHasher<Admin>, PasswordHasher<Admin>>();
+
+builder.Services.AddMemoryCache();
 
 // Cấu hình JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -65,7 +67,7 @@ app.UseAuthorization();
 // Ánh xạ các controller
 app.MapControllers();
 
-//Chạy SeederAdmin để seed dữ liệu admin nếu chưa có
+// Chạy SeederAdmin để seed dữ liệu admin nếu chưa có
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;

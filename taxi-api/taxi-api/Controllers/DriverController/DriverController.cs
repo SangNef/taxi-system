@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -20,12 +21,14 @@ namespace Taxi.Controllers.DriverController
         private readonly TaxiContext _context;
         private readonly IPasswordHasher<Driver> _passwordHasher;
         private readonly IConfiguration _config;
+        private readonly IMemoryCache _cache;
 
-        public DriverController(TaxiContext context, IPasswordHasher<Driver> passwordHasher, IConfiguration config)
+        public DriverController(TaxiContext context, IPasswordHasher<Driver> passwordHasher, IConfiguration config, IMemoryCache cache)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
             _config = config;
+            _cache = cache;
         }
 
         [HttpPost("register")]
@@ -79,10 +82,8 @@ namespace Taxi.Controllers.DriverController
             var token = GenerateJwtToken(driver);
             var refreshToken = GenerateRefreshToken();
 
-            driver.RefreshToken = refreshToken;
-            driver.RefreshTokenExpiryTime = DateTime.Now.AddDays(Convert.ToDouble(_config["Jwt:RefreshTokenExpiryDays"]));
-
-            _context.SaveChanges();
+            // Lưu refresh token vào cache với thời gian 1 ngày
+            _cache.Set(driver.Id.ToString(), refreshToken, TimeSpan.FromDays(1));
 
             return Ok(new { message = "Driver login successfully.", token, refreshToken });
         }
@@ -93,17 +94,19 @@ namespace Taxi.Controllers.DriverController
             if (refreshTokenRequest == null)
                 return BadRequest("Invalid client request.");
 
-            var driver = _context.Drivers.FirstOrDefault(d => d.RefreshToken == refreshTokenRequest.RefreshToken);
-            if (driver == null || driver.RefreshTokenExpiryTime <= DateTime.Now)
+            // Kiểm tra refresh token trong cache
+            if (!_cache.TryGetValue(refreshTokenRequest.RefreshToken, out string driverId))
                 return Unauthorized("Invalid or expired refresh token.");
+
+            var driver = _context.Drivers.FirstOrDefault(d => d.Id.ToString() == driverId);
+            if (driver == null)
+                return NotFound("Driver not found.");
 
             var newToken = GenerateJwtToken(driver);
             var newRefreshToken = GenerateRefreshToken();
 
-            driver.RefreshToken = newRefreshToken;
-            driver.RefreshTokenExpiryTime = DateTime.Now.AddDays(Convert.ToDouble(_config["Jwt:RefreshTokenExpiryDays"]));
-
-            _context.SaveChanges();
+            // Cập nhật refresh token trong cache
+            _cache.Set(driver.Id.ToString(), newRefreshToken, TimeSpan.FromDays(1));
 
             return Ok(new { token = newToken, refreshToken = newRefreshToken });
         }
@@ -115,10 +118,10 @@ namespace Taxi.Controllers.DriverController
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, driver.Fullname), // Changed to driver.Fullname
+                new Claim(JwtRegisteredClaimNames.Sub, driver.Fullname),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim("Phone", driver.Phone ?? ""),
-                new Claim("DriverId", driver.Id.ToString()) // Add DriverId as a claim
+                new Claim("DriverId", driver.Id.ToString())
             };
 
             var token = new JwtSecurityToken(

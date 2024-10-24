@@ -5,49 +5,55 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography; // Thêm namespace này
 using System.Text;
 using taxi_api.DTO;
 using taxi_api.Models;
-using System.Security.Cryptography;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Taxibibi.Controllers.AdminController
 {
-    [Route("api/admin")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AdminController : ControllerBase
     {
         private readonly TaxiContext _context;
         private readonly IPasswordHasher<Admin> _passwordHasher;
         private readonly IConfiguration _config;
+        private readonly IMemoryCache _cache; 
 
-        public AdminController(TaxiContext context, IPasswordHasher<Admin> passwordHasher, IConfiguration config)
+        public AdminController(TaxiContext context, IPasswordHasher<Admin> passwordHasher, IConfiguration config, IMemoryCache cache)
         {
-            _context = context;
-            _passwordHasher = passwordHasher;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
             _config = config;
+            _cache = cache; 
         }
 
         [HttpPost("login")]
         public IActionResult Login([FromBody] AdminLoginDto loginDto)
         {
             if (loginDto == null)
+            {
                 return BadRequest("Invalid login data.");
+            }
 
             var admin = _context.Admins.FirstOrDefault(a => a.Email == loginDto.Email);
             if (admin == null)
+            {
                 return NotFound("Admin not found.");
+            }
 
             var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(admin, admin.Password, loginDto.Password);
             if (passwordVerificationResult == PasswordVerificationResult.Failed)
+            {
                 return Unauthorized("Invalid password.");
+            }
 
             var token = GenerateJwtToken(admin);
             var refreshToken = GenerateRefreshToken();
 
-            admin.RefreshToken = refreshToken;
-            admin.RefreshTokenExpiryTime = DateTime.Now.AddDays(Convert.ToDouble(_config["Jwt:RefreshTokenExpiryDays"]));
-
-            _context.SaveChanges();
+            _cache.Set(refreshToken, admin.Email, TimeSpan.FromMinutes(30));
 
             return Ok(new { message = "Admin login successfully.", token, refreshToken });
         }
@@ -56,19 +62,27 @@ namespace Taxibibi.Controllers.AdminController
         public IActionResult RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenRequest)
         {
             if (refreshTokenRequest == null)
+            {
                 return BadRequest("Invalid client request.");
+            }
 
-            var admin = _context.Admins.FirstOrDefault(a => a.RefreshToken == refreshTokenRequest.RefreshToken);
-            if (admin == null || admin.RefreshTokenExpiryTime <= DateTime.Now)
+            // Kiểm tra refresh token trong cache
+            if (!_cache.TryGetValue(refreshTokenRequest.RefreshToken, out string adminEmail))
+            {
                 return Unauthorized("Invalid or expired refresh token.");
+            }
+
+            var admin = _context.Admins.FirstOrDefault(a => a.Email == adminEmail);
+            if (admin == null)
+            {
+                return NotFound("Admin not found.");
+            }
 
             var newToken = GenerateJwtToken(admin);
             var newRefreshToken = GenerateRefreshToken();
 
-            admin.RefreshToken = newRefreshToken;
-            admin.RefreshTokenExpiryTime = DateTime.Now.AddDays(Convert.ToDouble(_config["Jwt:RefreshTokenExpiryDays"]));
-
-            _context.SaveChanges();
+            // Cập nhật refresh token mới vào cache
+            _cache.Set(newRefreshToken, admin.Email, TimeSpan.FromMinutes(30));
 
             return Ok(new { token = newToken, refreshToken = newRefreshToken });
         }
@@ -88,7 +102,7 @@ namespace Taxibibi.Controllers.AdminController
             var token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_config["Jwt:ExpiryMinutes"])),
+                expires: DateTime.Now.AddMinutes(120),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

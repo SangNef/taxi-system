@@ -78,10 +78,6 @@ public partial class TaxiContext : DbContext
             entity.Property(e => e.Phone)
                 .HasMaxLength(50)
                 .HasColumnName("phone");
-            entity.Property(e => e.RefreshToken)
-                .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.RefreshTokenExpiryTime).HasColumnType("datetime");
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
@@ -312,10 +308,6 @@ public partial class TaxiContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("phone");
             entity.Property(e => e.Point).HasColumnName("point");
-            entity.Property(e => e.RefreshToken)
-                .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.RefreshTokenExpiryTime).HasColumnType("datetime");
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
