@@ -97,7 +97,6 @@ namespace Taxi.Controllers.DriverController
             if (refreshTokenRequest == null)
                 return BadRequest("Invalid client request.");
 
-            // Kiểm tra refresh token trong cache
             if (!_cache.TryGetValue(refreshTokenRequest.RefreshToken, out string driverId))
                 return Unauthorized("Invalid or expired refresh token.");
 
@@ -108,7 +107,6 @@ namespace Taxi.Controllers.DriverController
             var newToken = GenerateJwtToken(driver);
             var newRefreshToken = GenerateRefreshToken();
 
-            // Cập nhật refresh token trong cache
             _cache.Set(driver.Id.ToString(), newRefreshToken, TimeSpan.FromDays(1));
 
             return Ok(new { token = newToken, refreshToken = newRefreshToken });
