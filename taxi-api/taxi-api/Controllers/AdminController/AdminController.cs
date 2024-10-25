@@ -66,7 +66,6 @@ namespace Taxibibi.Controllers.AdminController
                 return BadRequest("Invalid client request.");
             }
 
-            // Kiểm tra refresh token trong cache
             if (!_cache.TryGetValue(refreshTokenRequest.RefreshToken, out string adminEmail))
             {
                 return Unauthorized("Invalid or expired refresh token.");
@@ -81,7 +80,6 @@ namespace Taxibibi.Controllers.AdminController
             var newToken = GenerateJwtToken(admin);
             var newRefreshToken = GenerateRefreshToken();
 
-            // Cập nhật refresh token mới vào cache
             _cache.Set(newRefreshToken, admin.Email, TimeSpan.FromMinutes(30));
 
             return Ok(new { token = newToken, refreshToken = newRefreshToken });

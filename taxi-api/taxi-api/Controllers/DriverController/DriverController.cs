@@ -50,10 +50,10 @@ namespace Taxi.Controllers.DriverController
                 Fullname = driverDto.Name,
                 Phone = driverDto.Phone,
                 Password = _passwordHasher.HashPassword(null, driverDto.Password),
-                IsActive = driverDto.IsActive,
-                IsDelete = driverDto.IsDelete,
-                Point = driverDto.Point,
-                Commission = driverDto.Commission ?? 0,
+                IsActive = false,
+                IsDelete = false,
+                Point = 0,
+                Commission = 0,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
@@ -75,6 +75,9 @@ namespace Taxi.Controllers.DriverController
             if (driver == null)
                 return NotFound("Driver not found.");
 
+            if (driver.IsActive != true)
+                return Unauthorized("Driver account is not activated.");
+
             var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(driver, driver.Password, loginDto.Password);
             if (passwordVerificationResult == PasswordVerificationResult.Failed)
                 return Unauthorized("Invalid password.");
@@ -82,11 +85,11 @@ namespace Taxi.Controllers.DriverController
             var token = GenerateJwtToken(driver);
             var refreshToken = GenerateRefreshToken();
 
-            // Lưu refresh token vào cache với thời gian 1 ngày
             _cache.Set(driver.Id.ToString(), refreshToken, TimeSpan.FromDays(1));
 
             return Ok(new { message = "Driver login successfully.", token, refreshToken });
         }
+
 
         [HttpPost("refresh-token")]
         public IActionResult RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenRequest)
