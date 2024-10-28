@@ -1,3 +1,160 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+    font-family: 'KoHo', sans-serif !important;
+    background-color: #F0F2F5;
+}
+
+.ant-typography,
+.ant-btn,
+.ant-table,
+.ant-menu-item,
+.ant-menu-item a,
+.ant-dropdown-menu-title-content .ant-typography {
+    font-family: 'KoHo', sans-serif;
+}
+
+.h2Title {
+    @apply font-bold text-4xl w-full md:w-3/4 xl:w-1/2 mx-auto mb-8 text-center;
+}
+
+@media (min-width: 768px) {
+    .h2Title {
+        @apply text-5xl;
+    }
+}
+
+@media (min-width: 1280px) {
+    .h2Title {
+        @apply text-6xl w-1/2;
+    }
+}
+
+.pText {
+    @apply text-lg md:text-xl lg:text-2xl;
+    width: 100%;
+    text-align: center;
+}
+
+.custom-table .ant-table-thead>tr>th {
+    @apply bg-[#222E3C] font-bold;
+    @apply p-2;
+}
+
+.custom-table .ant-table-tbody>tr>td {
+    @apply p-2;
+}
+
+.ant-table-wrapper .ant-table-tbody>tr>td {
+    transition: background 0.2s, border-color 0.2s;
+    border-bottom: 1px solid #4E5863;
+}
+
+.ant-table-wrapper .ant-table-tbody .ant-table-row .ant-table-cell-row-hover {
+    background-color: #e0f1ff;
+}
+
+.ant-table-wrapper .ant-table-row-expand-icon-cell .ant-table-row-expand-icon {
+    border-color: #4E5863;
+}
+
+.ant-table-wrapper .ant-table-container thead.ant-table-thead th {
+    background-color: #222E3C;
+    color: #B7BBC0;
+    font-weight: 700;
+}
+
+.ant-table-wrapper .ant-table-cell {
+    color: #B7BBC0;
+}
+
+/* Bảng điều chỉnh cho nền tối */
+
+/* Màu nền và viền cho bảng */
+.transparent-table .ant-table {
+    background-color: #222E3C !important;
+    /* Nền tối cho bảng */
+    border-color: #4E5863 !important;
+    /* Viền xám đậm */
+}
+
+/* Nền và màu chữ cho tiêu đề (thead) */
+.transparent-table .ant-table-thead>tr>th {
+    background-color: #2E3A48 !important;
+    /* Nền tiêu đề màu tối xanh đậm hơn */
+    color: #DDE2E6 !important;
+    /* Màu chữ xám sáng */
+    font-weight: 700;
+    border-bottom: 1px solid #4E5863 !important;
+    /* Viền dưới của tiêu đề */
+}
+
+/* Nền và màu chữ cho các ô trong bảng (tbody) */
+.transparent-table .ant-table-tbody>tr>td {
+    background-color: #2B3645 !important;
+    /* Nền ô trong bảng tối */
+    color: #DDE2E6 !important;
+    /* Màu chữ sáng */
+    border-bottom: 1px solid #4E5863 !important;
+    /* Viền ô */
+}
+
+/* Hiệu ứng hover cho các dòng trong bảng */
+.ant-table-wrapper .ant-table-tbody .ant-table-row:hover {
+    background-color: #3A4656 !important;
+    /* Nền hover đậm hơn */
+}
+
+/* Custom pagination (phân trang) với nền tối */
+.ant-pagination-item {
+    background-color: #2B3645 !important;
+    /* Nền tối cho phân trang */
+    border: 1px solid #4E5863 !important;
+    /* Viền phân trang */
+}
+
+.ant-pagination-item a {
+    color: #DDE2E6 !important;
+    /* Màu chữ sáng cho phân trang */
+}
+
+.ant-pagination-item-active {
+    background-color: #4E5863 !important;
+    /* Nền cho trang hiện tại */
+    border-color: #4E5863 !important;
+}
+
+.ant-pagination-item-active a {
+    color: white !important;
+    /* Màu chữ cho trang hiện tại */
+}
+
+.ant-pagination-prev,
+.ant-pagination-next {
+    color: #DDE2E6 !important;
+    /* Màu chữ cho nút prev/next */
+}
+
+/* Breadcrumb (đường dẫn) với nền tối */
+.ant-breadcrumb-link {
+    color: #DDE2E6 !important;
+    /* Màu chữ breadcrumb */
+}
+
+.ant-breadcrumb-separator {
+    color: #4E5863 !important;
+    /* Màu phân cách breadcrumb */
+}
+
+.sidebar {
+    transition: transform 0.3s ease-in-out;
+    /* Smooth transition for sidebar */
+}
+
+/* When sidebar is hidden, apply transform to slide it out of view */
+.sidebar-hidden {
+    transform: translateX(-100%);
+    /* Move sidebar out of view */
+}

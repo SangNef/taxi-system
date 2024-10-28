@@ -1,1 +1,5 @@
 taxi-admin/node_modules/
+taxi-app/node_modules/
+
+taxi-admin/.env
+taxi-app/.env
