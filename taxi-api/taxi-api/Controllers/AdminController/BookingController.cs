@@ -2,14 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using taxi_api.DTO;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using taxi_api.Models;
-using Taxibibi.Helpers;
+using taxi_api.Helpers;
 
-
-namespace Taxibibi.Controllers.AdminController
+namespace taxi_api.Controllers.AdminController
 {
     [Route("api/admin/booking")]
     [ApiController]
@@ -62,7 +60,12 @@ namespace Taxibibi.Controllers.AdminController
             // Validate the request
             if (request == null)
             {
-                return BadRequest("Invalid data.");
+                return BadRequest(new
+                {
+                    code = 400,
+                    data = (object)null,
+                    message = "Invalid data."
+                });
             }
 
             Customer customer;
@@ -72,7 +75,12 @@ namespace Taxibibi.Controllers.AdminController
                 customer = await _context.Customers.FirstOrDefaultAsync(c => c.Phone == request.Phone);
                 if (customer != null)
                 {
-                    return BadRequest("Số điện thoại đã tồn tại!");
+                    return BadRequest(new
+                    {
+                        code = 400,
+                        data = (object)null,
+                        message = "Số điện thoại đã tồn tại!"
+                    });
                 }
                 else
                 {
@@ -89,17 +97,32 @@ namespace Taxibibi.Controllers.AdminController
                 customer = await _context.Customers.FindAsync(request.CustomerId);
                 if (customer == null)
                 {
-                    return BadRequest("Khách hàng không tồn tại!");
+                    return BadRequest(new
+                    {
+                        code = 400,
+                        data = (object)null,
+                        message = "Khách hàng không tồn tại!"
+                    });
                 }
             }
             else
             {
-                return BadRequest("Vui lòng chọn hoặc tạo mới khách hàng!");
+                return BadRequest(new
+                {
+                    code = 400,
+                    data = (object)null,
+                    message = "Vui lòng chọn hoặc tạo mới khách hàng!"
+                });
             }
 
             if (request.PickUpId == null || !await _context.Wards.AnyAsync(w => w.Id == request.PickUpId))
             {
-                return BadRequest("Điểm đón không hợp lệ!");
+                return BadRequest(new
+                {
+                    code = 400,
+                    data = (object)null,
+                    message = "Điểm đón không hợp lệ!"
+                });
             }
 
             var arival = new Arival
@@ -116,7 +139,12 @@ namespace Taxibibi.Controllers.AdminController
             {
                 if (request.DropOffId == null || string.IsNullOrEmpty(request.DropOffAddress))
                 {
-                    return BadRequest("Vui lòng chọn điểm đến!");
+                    return BadRequest(new
+                    {
+                        code = 400,
+                        data = (object)null,
+                        message = "Vui lòng chọn điểm đến!"
+                    });
                 }
                 arival.DropOffId = request.DropOffId;
                 arival.DropOffAddress = request.DropOffAddress;
@@ -132,19 +160,35 @@ namespace Taxibibi.Controllers.AdminController
                 CustomerId = customer.Id,
                 ArivalId = arival.Id,
                 StartAt = request.StartTime,
-                EndAt = request.EndTime, 
+                EndAt = null,
                 Count = request.Count,
                 Price = request.Price,
                 HasFull = request.HasFull,
-                Status = "1"
+                Status = "1",
+                InviteId = 0 
             };
 
             await _context.Bookings.AddAsync(booking);
             await _context.SaveChangesAsync();
 
-            var taxi = await FindDriverHelper.FindDriver(booking.Id, _context);
+            var taxi = await FindDriverHelper.FindDriver(booking.Id, 0, _context); 
 
-            return Ok("Tạo chuyến đi thành công!");
+            if (taxi == null)
+            {
+                return BadRequest(new
+                {
+                    code = 400,
+                    data = (object)null,
+                    message = "Không tìm thấy tài xế phù hợp."
+                });
+            }
+
+            return Ok(new
+            {
+                code = 200,
+                data = new { bookingId = booking.Id },
+                message = "Tạo chuyến đi thành công!"
+            });
         }
     }
 }
