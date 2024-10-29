@@ -28,8 +28,8 @@ namespace taxi_api.Controllers.AdminController
             });
         }
 
-        [HttpPost("activate")]
-        public IActionResult ActivateDriver([FromBody] int driverId)
+        [HttpPost("activate/{driverId}")]
+        public IActionResult ActivateDriver(int driverId)
         {
             if (driverId <= 0)
             {
