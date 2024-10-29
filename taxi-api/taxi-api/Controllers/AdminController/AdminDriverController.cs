@@ -4,7 +4,6 @@ using taxi_api.Models;
 
 namespace taxi_api.Controllers.AdminController
 {
-    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class AdminDriverController : ControllerBase
