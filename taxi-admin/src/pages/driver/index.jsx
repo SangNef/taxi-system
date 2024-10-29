@@ -1,106 +1,98 @@
-import { Table } from "antd";
-import React from "react";
+import { Button, Popconfirm, Table } from "antd";
+import React, { useEffect } from "react";
+import { getDrivers } from "~/api/driver";
 
 const Driver = () => {
+  const [drivers, setDrivers] = React.useState([]);
+
+  const fetchDrivers = async () => {
+    try {
+      const response = await getDrivers();
+      setDrivers(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDrivers();
+    document.title = "Admin | Drivers";
+  }, []);
+
+  const handleBanDriver = (driverId) => {
+    // Thực hiện hành động ban driver ở đây, ví dụ: gọi API để ban driver
+    console.log(`Banning driver with ID: ${driverId}`);
+  };
+
+  const handleUnbanDriver = (driverId) => {
+    // Thực hiện hành động unban driver ở đây, ví dụ: gọi API để unban driver
+    console.log(`Unbanning driver with ID: ${driverId}`);
+  };
+
   const columns = [
     {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
+      title: "STT",
+      render: (text, record, index) => <span>{index + 1}</span>,
     },
     {
       title: "Name",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "fullname",
+      key: "fullname",
     },
     {
       title: "Phone Number",
-      dataIndex: "phoneNumber",
-      key: "phoneNumber",
-    },
-    {
-      title: "License Number",
-      dataIndex: "licenseNumber",
-      key: "licenseNumber",
+      dataIndex: "phone",
+      key: "phone",
     },
     {
       title: "Vehicle Type",
       dataIndex: "vehicleType",
       key: "vehicleType",
+      render: (text, record) => <span>{record.taxies.seat ? `${record.taxies.seat} seats` : "N/A"}</span>,
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status) => (
-        <span
-          className={`${
-            status === "Active"
-              ? "text-green-500"
-              : "text-red-500"
-          }`}
-        >
-          {status}
-        </span>
+      title: "Commission",
+      dataIndex: "commission",
+      key: "commission",
+      render: (commission) => <span>{commission}%</span>,
+    },
+    {
+      title: "Active",
+      dataIndex: "isActive",
+      key: "isActive",
+      render: (isActive) => (
+        <span className={`${isActive ? "text-green-500" : "text-red-500"}`}>{isActive ? "Active" : "Inactive"}</span>
       ),
     },
     {
-        title: "Action",
-        key: "action",
-        render: (text, record) => (
-          <div className="flex gap-4">
-            <button className="text-blue-500">Edit</button>
-            <button className="text-red-500">Delete</button>
-          </div>
-        ),
-    }
-  ];
-
-  const drivers = [
-    {
-      key: "1",
-      id: "DRV001",
-      name: "John Doe",
-      phoneNumber: "123-456-7890",
-      licenseNumber: "ABC123456",
-      vehicleType: "Truck",
-      status: "Active",
+      title: "Status",
+      dataIndex: "isDelete",
+      key: "isDelete",
+      render: (isDelete) => (
+        <span className={`${isDelete ? "text-red-500" : "text-green-500"}`}>{isDelete ? "Banned" : "Online"}</span>
+      ),
     },
     {
-      key: "2",
-      id: "DRV002",
-      name: "Jane Smith",
-      phoneNumber: "987-654-3210",
-      licenseNumber: "XYZ987654",
-      vehicleType: "Sedan",
-      status: "Inactive",
-    },
-    {
-      key: "3",
-      id: "DRV003",
-      name: "Alex Johnson",
-      phoneNumber: "555-789-1234",
-      licenseNumber: "LMN654321",
-      vehicleType: "SUV",
-      status: "Active",
-    },
-    {
-      key: "4",
-      id: "DRV004",
-      name: "Emily Davis",
-      phoneNumber: "222-333-4444",
-      licenseNumber: "QRS123987",
-      vehicleType: "Van",
-      status: "Active",
-    },
-    {
-      key: "5",
-      id: "DRV005",
-      name: "Michael Brown",
-      phoneNumber: "444-555-6666",
-      licenseNumber: "GHI789123",
-      vehicleType: "Truck",
-      status: "Inactive",
+      title: "Action",
+      key: "action",
+      render: (text, record) => (
+        <Popconfirm
+          title={record.isDelete ? "Are you sure you want to unban this driver?" : "Are you sure you want to ban this driver?"}
+          onConfirm={() => {
+            if (record.isDelete) {
+              handleUnbanDriver(record.id);
+            } else {
+              handleBanDriver(record.id);
+            }
+          }}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button type="primary" danger={record.isDelete}>
+            {record.isDelete ? "Unban" : "Ban"}
+          </Button>
+        </Popconfirm>
+      ),
     },
   ];
 
@@ -111,9 +103,9 @@ const Driver = () => {
       </div>
       <div className="bg-[#222E3C] rounded-lg p-5">
         <Table
-          dataSource={drivers} 
-          columns={columns} 
-          pagination={true} 
+          dataSource={drivers}
+          columns={columns}
+          pagination={true}
           className="transparent-table"
           style={{ background: "transparent" }}
         />

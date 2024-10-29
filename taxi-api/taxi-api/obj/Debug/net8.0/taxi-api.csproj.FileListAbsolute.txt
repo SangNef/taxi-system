@@ -256,8 +256,6 @@ C:\Users\admin\Desktop\Project\Taxi-net\taxi-api\taxi-api\bin\Debug\net8.0\runti
 C:\Users\admin\Desktop\Project\Taxi-net\taxi-api\taxi-api\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Drawing.Common.dll
 C:\Users\admin\Desktop\Project\Taxi-net\taxi-api\taxi-api\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\admin\Desktop\Project\Taxi-net\taxi-api\taxi-api\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Windows.Extensions.dll
-C:\Users\admin\Desktop\Project\Taxi-net\taxi-api\taxi-api\obj\Debug\net8.0\taxi-api.RazorAssemblyInfo.cache
-C:\Users\admin\Desktop\Project\Taxi-net\taxi-api\taxi-api\obj\Debug\net8.0\taxi-api.RazorAssemblyInfo.cs
 C:\Users\tuhun\OneDrive\Desktop\taxihihi\taxi-system\taxi-api\taxi-api\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\tuhun\OneDrive\Desktop\taxihihi\taxi-system\taxi-api\taxi-api\bin\Debug\net8.0\appsettings.json
 C:\Users\tuhun\OneDrive\Desktop\taxihihi\taxi-system\taxi-api\taxi-api\bin\Debug\net8.0\taxi-api.exe
@@ -519,3 +517,5 @@ C:\Users\tuhun\OneDrive\Desktop\taxihihi\taxi-system\taxi-api\taxi-api\obj\Debug
 C:\Users\tuhun\OneDrive\Desktop\taxihihi\taxi-system\taxi-api\taxi-api\obj\Debug\net8.0\taxi-api.pdb
 C:\Users\tuhun\OneDrive\Desktop\taxihihi\taxi-system\taxi-api\taxi-api\obj\Debug\net8.0\taxi-api.genruntimeconfig.cache
 C:\Users\tuhun\OneDrive\Desktop\taxihihi\taxi-system\taxi-api\taxi-api\obj\Debug\net8.0\ref\taxi-api.dll
+C:\Users\admin\Desktop\Project\Taxi-net\taxi-api\taxi-api\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\admin\Desktop\Project\Taxi-net\taxi-api\taxi-api\obj\Debug\net8.0\taxi-api.sourcelink.json

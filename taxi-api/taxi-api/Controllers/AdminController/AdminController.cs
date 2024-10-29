@@ -13,7 +13,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Taxibibi.Controllers.AdminController
 {
-    [Route("api/[controller]")]
+    [Route("api/admin")]
     [ApiController]
     public class AdminController : ControllerBase
     {
