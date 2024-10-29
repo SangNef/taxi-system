@@ -14,7 +14,9 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace taxi_api.Controllers.AdminController
 {
-    [Route("api/[controller]")]
+
+    [Authorize(Roles = "Admin")]
+    [Route("api/admin")]
     [ApiController]
     public class AdminController : ControllerBase
     {

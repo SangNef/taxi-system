@@ -41,6 +41,16 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", builder =>
+    {
+        builder.WithOrigins("http://localhost:5174")
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 // Thêm dịch vụ cho Controller
 builder.Services.AddControllers();
 
@@ -59,6 +69,8 @@ if (app.Environment.IsDevelopment())
 
 // Sử dụng HTTPS
 app.UseHttpsRedirection();
+
+app.UseCors("AllowSpecificOrigin");
 
 // Kích hoạt xác thực JWT
 app.UseAuthentication(); // Thêm xác thực JWT vào middleware pipeline

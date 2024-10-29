@@ -16,7 +16,7 @@ using taxi_api.Helpers;
 
 namespace taxi_api.Controllers.DriverController
 {
-    [Route("api/[controller]")]
+    [Route("api/driver")]
     [ApiController]
     public class DriverController : ControllerBase
     {
@@ -55,7 +55,7 @@ namespace taxi_api.Controllers.DriverController
                 IsActive = false,
                 IsDelete = false,
                 Point = 0,
-                Commission = 0,
+                Commission = 20,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
@@ -111,6 +111,12 @@ namespace taxi_api.Controllers.DriverController
             _cache.Set(driver.Id.ToString(), newRefreshToken, TimeSpan.FromDays(1));
 
             return Ok(new { token = newToken, refreshToken = newRefreshToken });
+        }
+
+        [HttpGet("hello")]
+        public IActionResult hello()
+        {
+            return Ok("Hello");
         }
 
         private string GenerateJwtToken(Driver driver)

@@ -9,7 +9,7 @@ using taxi_api.Helpers;
 
 namespace taxi_api.Controllers.AdminController
 {
-    [Route("api/[controller]")]
+    [Route("api/admin/booking")]
     [ApiController]
     public class BookingController : ControllerBase
     {
@@ -18,6 +18,40 @@ namespace taxi_api.Controllers.AdminController
         public BookingController(TaxiContext context)
         {
             _context = context;
+        }
+
+        [HttpGet("list")]
+        public async Task<IActionResult> GetAllBookings()
+        {
+            var bookings = await _context.Bookings
+                .Include(b => b.Customer)  // Thêm thông tin khách hàng nếu cần
+                .Include(b => b.Arival)    // Thêm thông tin về Arival nếu cần
+                .ToListAsync();
+
+            if (bookings == null || !bookings.Any())
+            {
+                return NotFound("Không có chuyến đi nào được tìm thấy.");
+            }
+
+            // Chọn ra thông tin cần thiết từ bookings
+            var bookingList = bookings.Select(b => new
+            {
+                b.Id,
+                b.Code,
+                CustomerName = b.Customer.Name,
+                b.StartAt,
+                b.EndAt,
+                b.Price,
+                b.Status,
+                ArivalDetails = new
+                {
+                    b.Arival.PickUpAddress,
+                    b.Arival.DropOffAddress,
+                    b.Arival.Price
+                }
+            });
+
+            return Ok(bookingList);
         }
 
         [HttpPost("store")]
