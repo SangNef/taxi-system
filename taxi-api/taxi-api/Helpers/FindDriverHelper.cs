@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using taxi_api.Models;
 
-namespace Taxibibi.Helpers
+namespace taxi_api.Helpers
 {
     public static class FindDriverHelper
     {
-        public static async Task<Driver> FindDriver(int bookingId, TaxiContext context)
+        public static async Task<Driver> FindDriver(int bookingId, int inviteId, TaxiContext context)
         {
             var booking = await context.Bookings.FindAsync(bookingId);
             if (booking == null)
@@ -22,7 +22,7 @@ namespace Taxibibi.Helpers
             // Bước 1: Lấy danh sách tài xế có số ghế đủ để đáp ứng số lượng khách trong booking hiện tại
             var drivers = await context.Drivers
                 .Include(d => d.Taxies)
-                .Where(d => d.Taxies.Any(t => t.Seat >= bookingCount)) // Chỉ chọn tài xế có số ghế >= bookingCount
+                .Where(d => d.Id != inviteId && d.Taxies.Any(t => t.Seat >= bookingCount)) // Loại bỏ tài xế có ID trùng với InviteId
                 .ToListAsync();
 
             if (!drivers.Any())
@@ -43,8 +43,8 @@ namespace Taxibibi.Helpers
                     var totalBookings = await context.BookingDetails
                         .Include(bd => bd.Booking)
                         .Where(bd => bd.TaxiId == taxi.Id &&
-                                     bd.Booking.StartAt.HasValue &&  // Kiểm tra nếu StartTime có giá trị
-                                     bd.Booking.StartAt.Value.Date == bookingStartDate.Value.Date)  // Sử dụng .Value để truy cập giá trị thực sự của DateTime?
+                                     bd.Booking.StartAt.HasValue &&
+                                     bd.Booking.StartAt.Value.Date == bookingStartDate.Value.Date)
                         .SumAsync(bd => bd.Booking.Count);
 
                     // Kiểm tra nếu tổng số lượng khách trong các booking <= số ghế của taxi
@@ -71,14 +71,14 @@ namespace Taxibibi.Helpers
                 var bookingDetail = new BookingDetail
                 {
                     BookingId = bookingId,
-                    TaxiId = selectedTaxi.Id, 
-                    Status = "1", 
+                    TaxiId = selectedTaxi.Id,
+                    Status = "1",
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 };
 
-                await context.BookingDetails.AddAsync(bookingDetail); // Thêm booking detail vào context
-                await context.SaveChangesAsync(); // Lưu tất cả các thay đổi vào cơ sở dữ liệu
+                await context.BookingDetails.AddAsync(bookingDetail);
+                await context.SaveChangesAsync();
 
                 return selectedDriver; // Trả về đối tượng Driver đã được chọn
             }
