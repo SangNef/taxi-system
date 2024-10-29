@@ -1,14 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "~/components/header";
 import Sidebar from "~/components/sidebar";
 
 const AdminLayout = ({ children }) => {
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true); // State to control sidebar visibility
+
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible); // Toggle sidebar visibility
+  };
+
   return (
     <div className="flex min-h-screen">
-      <Sidebar className="hidden md:block" /> {/* Sidebar is hidden on small screens */}
+      {isSidebarVisible && <Sidebar />} {/* Show sidebar based on state */}
       <div className="flex-1 flex flex-col bg-gray-200 min-h-screen">
-        <Header className="mb-4" />
-        <main className="p-4 flex-1 overflow-y-auto">
+        <Header toggleSidebar={toggleSidebar} className="mb-4" /> {/* Pass toggle function to Header */}
+        <main className="flex flex-col h-full w-full bg-[#19222D]">
           {children}
         </main>
       </div>
