@@ -4,7 +4,7 @@ CREATE DATABASE taxi;
 USE taxi;
 
 CREATE TABLE Admins (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY(1,1),
     name NVARCHAR(255),
     phone NVARCHAR(50),
     email NVARCHAR(255),
@@ -12,11 +12,13 @@ CREATE TABLE Admins (
     is_delete BIT,
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME DEFAULT GETDATE(),
-    deleted_at DATETIME NULL
+    deleted_at DATETIME NULL,
+	RefreshToken VARCHAR(255) NULL,
+	RefreshTokenExpiryTime DATETIME NULL
 );
 
 CREATE TABLE Drivers (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY(1,1),
     fullname NVARCHAR(255),
     phone NVARCHAR(50),
     password NVARCHAR(255),
@@ -26,11 +28,13 @@ CREATE TABLE Drivers (
     commission INT,
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME DEFAULT GETDATE(),
-    deleted_at DATETIME NULL
+    deleted_at DATETIME NULL,
+	RefreshToken VARCHAR(255) NULL,
+	RefreshTokenExpiryTime DATETIME NULL
 );
 
 CREATE TABLE Taxies (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY(1,1),
     driver_id INT,
     name NVARCHAR(255),
     license_plate NVARCHAR(50),
@@ -43,7 +47,7 @@ CREATE TABLE Taxies (
 );
 
 CREATE TABLE Customers (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY(1,1),
     name NVARCHAR(255),
     phone NVARCHAR(50),
     created_at DATETIME DEFAULT GETDATE(),
@@ -81,7 +85,7 @@ CREATE TABLE Wards (
 );
 
 CREATE TABLE Arivals (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY(1,1),
     type NVARCHAR(50),
     pick_up_id INT,
     pick_up_address NVARCHAR(255),
@@ -96,7 +100,8 @@ CREATE TABLE Arivals (
 );
 
 CREATE TABLE Bookings (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY(1,1),
+	code VARCHAR(20),
     customer_id INT,
     arival_id INT,
     invite_id INT,
@@ -105,6 +110,7 @@ CREATE TABLE Bookings (
     count INT,
     price DECIMAL(18, 2),
     status NVARCHAR(50),
+	has_full BIT DEFAULT 0,
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME DEFAULT GETDATE(),
     deleted_at DATETIME NULL,
@@ -113,7 +119,7 @@ CREATE TABLE Bookings (
 );
 
 CREATE TABLE BookingDetails (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY(1,1),
     booking_id INT,
     taxi_id INT,
     status NVARCHAR(50),
@@ -125,7 +131,7 @@ CREATE TABLE BookingDetails (
 );
 
 CREATE TABLE Reviews (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY(1,1),
     booking_detail_id INT,
     review NVARCHAR(255),
     rate INT,
@@ -136,7 +142,7 @@ CREATE TABLE Reviews (
 );
 
 CREATE TABLE Configs (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY(1,1),
     name NVARCHAR(255),
     config_key NVARCHAR(255),
     value NVARCHAR(MAX),
@@ -146,7 +152,7 @@ CREATE TABLE Configs (
 );
 
 CREATE TABLE Pages (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY(1,1),
     title NVARCHAR(255),
     slug NVARCHAR(255),
     created_at DATETIME DEFAULT GETDATE(),
@@ -155,7 +161,7 @@ CREATE TABLE Pages (
 );
 
 CREATE TABLE PageContents (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY(1,1),
     page_id INT,
     sub_title NVARCHAR(255),
     content TEXT,
@@ -166,7 +172,7 @@ CREATE TABLE PageContents (
 );
 
 CREATE TABLE PaymentHistory (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY(1,1),
     driver_id INT,
     payment NVARCHAR(255),
     total DECIMAL(18, 2),
@@ -177,7 +183,7 @@ CREATE TABLE PaymentHistory (
 );
 
 CREATE TABLE Notifications (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY(1,1),
     driver_id INT,
     is_read BIT,
     title NVARCHAR(255),
