@@ -4,6 +4,7 @@ using taxi_api.Models;
 
 namespace taxi_api.Controllers.AdminController
 {
+
     [Route("api/admin/driver")]
     [ApiController]
     public class AdminDriverController : ControllerBase
