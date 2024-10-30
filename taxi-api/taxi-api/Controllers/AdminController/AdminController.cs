@@ -5,7 +5,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography; // Thêm namespace này
+using System.Security.Cryptography;
 using System.Text;
 using taxi_api.DTO;
 using taxi_api.Models;
@@ -14,9 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace taxi_api.Controllers.AdminController
 {
-
-    [Authorize(Roles = "Admin")]
-    [Route("api/admin")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AdminController : ControllerBase
     {
@@ -40,7 +38,7 @@ namespace taxi_api.Controllers.AdminController
             {
                 return BadRequest(new
                 {
-                    code = 400,
+                    code = CommonErrorCodes.InvalidData,
                     data = (object)null,
                     message = "Invalid login data."
                 });
@@ -51,7 +49,7 @@ namespace taxi_api.Controllers.AdminController
             {
                 return NotFound(new
                 {
-                    code = 404,
+                    code = CommonErrorCodes.NotFound,
                     data = (object)null,
                     message = "Admin not found."
                 });
@@ -62,7 +60,7 @@ namespace taxi_api.Controllers.AdminController
             {
                 return Unauthorized(new
                 {
-                    code = 401,
+                    code = CommonErrorCodes.Unauthorized,
                     data = (object)null,
                     message = "Invalid password."
                 });
@@ -75,16 +73,15 @@ namespace taxi_api.Controllers.AdminController
 
             return Ok(new
             {
-                code = 200,
+                code = CommonErrorCodes.Success,
                 data = new
                 {
                     token,
                     refreshToken
                 },
-                message = "Admin login successfully."
+                message = "Admin logged in successfully."
             });
         }
-
 
         private string GenerateJwtToken(Admin admin)
         {

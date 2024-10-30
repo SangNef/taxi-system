@@ -4,7 +4,6 @@ using taxi_api.Models;
 
 namespace taxi_api.Controllers.AdminController
 {
-
     [Route("api/admin/driver")]
     [ApiController]
     public class AdminDriverController : ControllerBase
@@ -22,7 +21,7 @@ namespace taxi_api.Controllers.AdminController
             var drivers = _context.Drivers.ToList();
             return Ok(new
             {
-                code = 200,
+                code = CommonErrorCodes.Success,
                 data = drivers,
                 message = "Retrieved drivers successfully."
             });
@@ -35,31 +34,31 @@ namespace taxi_api.Controllers.AdminController
             {
                 return BadRequest(new
                 {
-                    code = 400,
+                    code = CommonErrorCodes.InvalidData,
                     data = (object)null,
                     message = "Invalid request. Driver ID is required."
                 });
             }
 
-            // Tìm tài xế trong database theo driverId
+            // Find the driver in the database by driverId
             var driver = _context.Drivers.FirstOrDefault(d => d.Id == driverId);
             if (driver == null)
             {
                 return NotFound(new
                 {
-                    code = 404,
+                    code = CommonErrorCodes.NotFound,
                     data = (object)null,
                     message = "Driver not found."
                 });
             }
 
-            // Kích hoạt tài xế
+            // Activate the driver
             driver.IsActive = true;
             _context.SaveChanges();
 
             return Ok(new
             {
-                code = 200,
+                code = CommonErrorCodes.Success,
                 data = new { driverId = driver.Id },
                 message = "Driver account activated successfully."
             });
