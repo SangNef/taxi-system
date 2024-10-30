@@ -8,7 +8,7 @@ using taxi_api.Helpers;
 
 namespace taxi_api.Controllers.UserController
 {
-    [Route("api/[controller]")]
+    [Route("api/user")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -76,7 +76,7 @@ namespace taxi_api.Controllers.UserController
             });
         }
 
-        [HttpGet("wards/search")]
+        [HttpGet("search-location")]
         public async Task<IActionResult> GetWardInfoByName([FromQuery] string wardName)
         {
             if (string.IsNullOrEmpty(wardName))
