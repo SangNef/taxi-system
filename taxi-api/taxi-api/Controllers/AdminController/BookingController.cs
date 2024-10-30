@@ -24,16 +24,21 @@ namespace taxi_api.Controllers.AdminController
         public async Task<IActionResult> GetAllBookings()
         {
             var bookings = await _context.Bookings
-                .Include(b => b.Customer)  // Thêm thông tin khách hàng nếu cần
-                .Include(b => b.Arival)    // Thêm thông tin về Arival nếu cần
+                .Include(b => b.Customer)  // Include customer information if needed
+                .Include(b => b.Arival)    // Include Arival information if needed
                 .ToListAsync();
 
             if (bookings == null || !bookings.Any())
             {
-                return NotFound("Không có chuyến đi nào được tìm thấy.");
+                return NotFound(new
+                {
+                    code = CommonErrorCodes.NotFound,
+                    data = (object)null,
+                    message = "No trips found."
+                });
             }
 
-            // Chọn ra thông tin cần thiết từ bookings
+            // Select necessary information from bookings
             var bookingList = bookings.Select(b => new
             {
                 b.Id,
@@ -51,7 +56,12 @@ namespace taxi_api.Controllers.AdminController
                 }
             });
 
-            return Ok(bookingList);
+            return Ok(new
+            {
+                code = CommonErrorCodes.Success,
+                data = bookingList,
+                message = "Successfully retrieved the list of trips."
+            });
         }
 
         [HttpPost("store")]
@@ -62,7 +72,7 @@ namespace taxi_api.Controllers.AdminController
             {
                 return BadRequest(new
                 {
-                    code = 400,
+                    code = CommonErrorCodes.InvalidData,
                     data = (object)null,
                     message = "Invalid data."
                 });
@@ -77,9 +87,9 @@ namespace taxi_api.Controllers.AdminController
                 {
                     return BadRequest(new
                     {
-                        code = 400,
+                        code = CommonErrorCodes.InvalidData,
                         data = (object)null,
-                        message = "Số điện thoại đã tồn tại!"
+                        message = "Phone number already exists!"
                     });
                 }
                 else
@@ -99,9 +109,9 @@ namespace taxi_api.Controllers.AdminController
                 {
                     return BadRequest(new
                     {
-                        code = 400,
+                        code = CommonErrorCodes.InvalidData,
                         data = (object)null,
-                        message = "Khách hàng không tồn tại!"
+                        message = "Customer does not exist!"
                     });
                 }
             }
@@ -109,9 +119,9 @@ namespace taxi_api.Controllers.AdminController
             {
                 return BadRequest(new
                 {
-                    code = 400,
+                    code = CommonErrorCodes.InvalidData,
                     data = (object)null,
-                    message = "Vui lòng chọn hoặc tạo mới khách hàng!"
+                    message = "Please select or create a new customer!"
                 });
             }
 
@@ -119,9 +129,9 @@ namespace taxi_api.Controllers.AdminController
             {
                 return BadRequest(new
                 {
-                    code = 400,
+                    code = CommonErrorCodes.InvalidData,
                     data = (object)null,
-                    message = "Điểm đón không hợp lệ!"
+                    message = "Invalid pick-up point!"
                 });
             }
 
@@ -141,9 +151,9 @@ namespace taxi_api.Controllers.AdminController
                 {
                     return BadRequest(new
                     {
-                        code = 400,
+                        code = CommonErrorCodes.InvalidData,
                         data = (object)null,
-                        message = "Vui lòng chọn điểm đến!"
+                        message = "Please select a destination!"
                     });
                 }
                 arival.DropOffId = request.DropOffId;
@@ -165,29 +175,29 @@ namespace taxi_api.Controllers.AdminController
                 Price = request.Price,
                 HasFull = request.HasFull,
                 Status = "1",
-                InviteId = 0 
+                InviteId = 0
             };
 
             await _context.Bookings.AddAsync(booking);
             await _context.SaveChangesAsync();
 
-            var taxi = await FindDriverHelper.FindDriver(booking.Id, 0, _context); 
+            var taxi = await FindDriverHelper.FindDriver(booking.Id, 0, _context);
 
             if (taxi == null)
             {
                 return BadRequest(new
                 {
-                    code = 400,
+                    code = CommonErrorCodes.InvalidData,
                     data = (object)null,
-                    message = "Không tìm thấy tài xế phù hợp."
+                    message = "No suitable driver found."
                 });
             }
 
             return Ok(new
             {
-                code = 200,
+                code = CommonErrorCodes.Success,
                 data = new { bookingId = booking.Id },
-                message = "Tạo chuyến đi thành công!"
+                message = "Trip created successfully!"
             });
         }
     }

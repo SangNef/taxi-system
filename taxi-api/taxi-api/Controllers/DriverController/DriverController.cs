@@ -16,7 +16,7 @@ using taxi_api.Helpers;
 
 namespace taxi_api.Controllers.DriverController
 {
-    [Route("api/driver")]
+    [Route("api/[controller]")]
     [ApiController]
     public class DriverController : ControllerBase
     {
@@ -38,13 +38,13 @@ namespace taxi_api.Controllers.DriverController
         {
             if (driverDto == null)
             {
-                return BadRequest(new { code = 400, message = "Dữ liệu tài xế không hợp lệ." });
+                return BadRequest(new { code = CommonErrorCodes.InvalidData, message = "Invalid Data." });
             }
 
             var existingDriver = _context.Drivers.FirstOrDefault(d => d.Phone == driverDto.Phone);
             if (existingDriver != null)
             {
-                return Conflict(new { code = 409, message = "Tài xế với số điện thoại này đã tồn tại." });
+                return Conflict(new { code = CommonErrorCodes.InvalidData, message = "The driver with this phone number already exists." });
             }
 
             var newDriver = new Driver
@@ -55,7 +55,7 @@ namespace taxi_api.Controllers.DriverController
                 IsActive = false,
                 IsDelete = false,
                 Point = 0,
-                Commission = 20,
+                Commission = 0,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
@@ -64,46 +64,55 @@ namespace taxi_api.Controllers.DriverController
             _context.SaveChanges();
 
             var token = GenerateJwtToken(newDriver);
-            return Ok(new { code = 200, message = "Tài xế đã đăng ký thành công.", data = new { token } });
+            return Ok(new { code = CommonErrorCodes.Success, message = "Register Driver Successfully", data = new { token } });
         }
 
         [HttpPost("login")]
         public IActionResult Login([FromBody] DriverLoginDto loginDto)
         {
             if (loginDto == null)
-                return BadRequest(new { code = 400, message = "Dữ liệu đăng nhập không hợp lệ." });
+                return BadRequest(new { code = CommonErrorCodes.InvalidData, message = "Invalid login data." });
 
             var driver = _context.Drivers.FirstOrDefault(d => d.Phone == loginDto.Phone);
             if (driver == null)
-                return NotFound(new { code = 404, message = "Tài xế không tồn tại." });
-
-            if (driver.IsActive != true)
-                return Unauthorized(new { code = 401, message = "Tài khoản tài xế chưa được kích hoạt." });
+                return NotFound(new { code = CommonErrorCodes.NotFound, message = "Driver does not exist." });
 
             var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(driver, driver.Password, loginDto.Password);
             if (passwordVerificationResult == PasswordVerificationResult.Failed)
-                return Unauthorized(new { code = 401, message = "Mật khẩu không hợp lệ." });
+                return Unauthorized(new { code = CommonErrorCodes.Unauthorized, message = "Invalid account or password" });
+
+            if (driver.IsActive != true)
+                return Unauthorized(new { code = CommonErrorCodes.Unauthorized, message = "Driver account is not activated." });
+
+            if (driver.IsDelete == true)
+                return Unauthorized(new { code = CommonErrorCodes.Unauthorized, message = "Your account is locked. Please contact customer support." });
+
+            // Check if the driver has an assigned vehicle
+            var taxi = _context.Taxies.FirstOrDefault(t => t.DriverId == driver.Id && t.DeletedAt == null);
+            if (taxi == null)
+            {
+                return Unauthorized(new { code = CommonErrorCodes.Unauthorized, message = "Driver has no vehicle assigned." });
+            }
 
             var token = GenerateJwtToken(driver);
             var refreshToken = GenerateRefreshToken();
             _cache.Set(driver.Id.ToString(), refreshToken, TimeSpan.FromDays(1));
 
-            return Ok(new { code = 200, message = "Tài xế đã đăng nhập thành công.", data = new { token, refreshToken } });
+            return Ok(new { code = CommonErrorCodes.Success, message = "Driver logged in successfully.", data = new { token, refreshToken } });
         }
-
 
         [HttpPost("refresh-token")]
         public IActionResult RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenRequest)
         {
             if (refreshTokenRequest == null)
-                return BadRequest("Invalid client request.");
+                return BadRequest(new { code = CommonErrorCodes.InvalidData, message = "Invalid client request." });
 
             if (!_cache.TryGetValue(refreshTokenRequest.RefreshToken, out string driverId))
-                return Unauthorized("Invalid or expired refresh token.");
+                return Unauthorized(new { code = CommonErrorCodes.Unauthorized, message = "Invalid or expired refresh token." });
 
             var driver = _context.Drivers.FirstOrDefault(d => d.Id.ToString() == driverId);
             if (driver == null)
-                return NotFound("Driver not found.");
+                return NotFound(new { code = CommonErrorCodes.NotFound, message = "Driver not found." });
 
             var newToken = GenerateJwtToken(driver);
             var newRefreshToken = GenerateRefreshToken();
@@ -111,12 +120,6 @@ namespace taxi_api.Controllers.DriverController
             _cache.Set(driver.Id.ToString(), newRefreshToken, TimeSpan.FromDays(1));
 
             return Ok(new { token = newToken, refreshToken = newRefreshToken });
-        }
-
-        [HttpGet("hello")]
-        public IActionResult hello()
-        {
-            return Ok("Hello");
         }
 
         private string GenerateJwtToken(Driver driver)
@@ -150,16 +153,17 @@ namespace taxi_api.Controllers.DriverController
                 return Convert.ToBase64String(randomNumber);
             }
         }
+
         [HttpPost("create-booking")]
         public async Task<IActionResult> CreateBooking([FromBody] BookingRequestDto request)
         {
             if (request == null)
-                return BadRequest(new { code = 400, message = "Dữ liệu không hợp lệ." });
+                return BadRequest(new { code = CommonErrorCodes.InvalidData, message = "Invalid data." });
 
             var driverIdClaim = User.Claims.FirstOrDefault(c => c.Type == "DriverId")?.Value;
             if (string.IsNullOrEmpty(driverIdClaim) || !int.TryParse(driverIdClaim, out int driverId))
             {
-                return Unauthorized(new { code = 401, message = "Tài xế không hợp lệ." });
+                return Unauthorized(new { code = CommonErrorCodes.Unauthorized, message = "Invalid driver." });
             }
 
             Customer customer;
@@ -168,7 +172,7 @@ namespace taxi_api.Controllers.DriverController
                 customer = await _context.Customers.FirstOrDefaultAsync(c => c.Phone == request.Phone);
                 if (customer != null)
                 {
-                    return BadRequest(new { code = 400, message = "Số điện thoại đã tồn tại!" });
+                    return BadRequest(new { code = CommonErrorCodes.InvalidData, message = "Phone number already exists!" });
                 }
                 else
                 {
@@ -185,17 +189,17 @@ namespace taxi_api.Controllers.DriverController
                 customer = await _context.Customers.FindAsync(request.CustomerId);
                 if (customer == null)
                 {
-                    return BadRequest(new { code = 400, message = "Khách hàng không tồn tại!" });
+                    return BadRequest(new { code = CommonErrorCodes.InvalidData, message = "Customer does not exist!" });
                 }
             }
             else
             {
-                return BadRequest(new { code = 400, message = "Vui lòng chọn hoặc tạo mới khách hàng!" });
+                return BadRequest(new { code = CommonErrorCodes.InvalidData, message = "Please select or create a new customer!" });
             }
 
             if (request.PickUpId == null || !await _context.Wards.AnyAsync(w => w.Id == request.PickUpId))
             {
-                return BadRequest(new { code = 400, message = "Điểm đón không hợp lệ!" });
+                return BadRequest(new { code = CommonErrorCodes.InvalidData, message = "Invalid pickup point!" });
             }
 
             var arival = new Arival
@@ -212,7 +216,7 @@ namespace taxi_api.Controllers.DriverController
             {
                 if (request.DropOffId == null || string.IsNullOrEmpty(request.DropOffAddress))
                 {
-                    return BadRequest(new { code = 400, message = "Vui lòng chọn điểm đến!" });
+                    return BadRequest(new { code = CommonErrorCodes.InvalidData, message = "Please select a destination!" });
                 }
                 arival.DropOffId = request.DropOffId;
                 arival.DropOffAddress = request.DropOffAddress;
@@ -232,15 +236,15 @@ namespace taxi_api.Controllers.DriverController
                 Price = request.Price,
                 HasFull = request.HasFull,
                 Status = "1",
-                InviteId = driverId
+                InviteId = driverId,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
             };
 
             await _context.Bookings.AddAsync(booking);
             await _context.SaveChangesAsync();
 
-            var taxi = await FindDriverHelper.FindDriver(booking.Id, driverId, _context);
-
-            return Ok(new { code = 200, message = "Tạo chuyến đi thành công!" });
+            return Ok(new { code = CommonErrorCodes.Success, message = "Booking created successfully!", data = booking });
         }
         [HttpGet("unassigned-bookings")]
         public async Task<IActionResult> GetUnassignedBookings()
@@ -249,26 +253,27 @@ namespace taxi_api.Controllers.DriverController
                 .Where(b => !_context.BookingDetails.Any(bd => bd.BookingId == b.Id))
                 .ToListAsync();
 
-            return Ok(new { code = 200, message = "Lấy danh sách chuyến đi chưa được gán thành công.", data = unassignedBookings });
+            return Ok(new { code = CommonErrorCodes.Success, message = "Successfully retrieved the list of unassigned trips.", data = unassignedBookings });
         }
+
         [HttpGet("assigned-bookings")]
         public async Task<IActionResult> GetAssignedBookings()
         {
             var driverIdClaim = User.Claims.FirstOrDefault(c => c.Type == "DriverId")?.Value;
             if (string.IsNullOrEmpty(driverIdClaim) || !int.TryParse(driverIdClaim, out int driverId))
             {
-                return Unauthorized(new { code = 401, message = "Tài xế không hợp lệ." });
+                return Unauthorized(new { code = CommonErrorCodes.Unauthorized, message = "Invalid driver." });
             }
 
             var assignedBookings = await _context.Bookings
                 .Where(b => b.InviteId == driverId)
-                .Include(b => b.Customer) // Bao gồm thông tin khách hàng
-                .Include(b => b.Arival)   // Bao gồm thông tin điểm đến
+                .Include(b => b.Customer)
+                .Include(b => b.Arival)
                 .ToListAsync();
 
             if (!assignedBookings.Any())
             {
-                return NotFound(new { code = 404, message = "Không có chuyến đi nào được gán cho tài xế này." });
+                return NotFound(new { code = CommonErrorCodes.NotFound, message = "No trips assigned to this driver." });
             }
 
             var result = assignedBookings.Select(b => new
@@ -284,7 +289,8 @@ namespace taxi_api.Controllers.DriverController
                 CustomerPhone = b.Customer.Phone
             }).ToList();
 
-            return Ok(new { code = 200, message = "Lấy danh sách chuyến đi đã gán thành công.", data = result });
+            return Ok(new { code = CommonErrorCodes.Success, message = "Successfully retrieved assigned trips.", data = result });
         }
+
     }
 }
