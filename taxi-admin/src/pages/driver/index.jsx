@@ -1,16 +1,21 @@
-import { Button, Popconfirm, Table } from "antd";
+import { Button, Popconfirm, Table, notification } from "antd";
 import React, { useEffect } from "react";
 import { getDrivers } from "~/api/driver";
 
 const Driver = () => {
   const [drivers, setDrivers] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
 
   const fetchDrivers = async () => {
+    setLoading(true);
     try {
       const response = await getDrivers();
-      setDrivers(response);
+      setDrivers(response.data || response); // Adjust according to your API response structure
     } catch (error) {
       console.error(error);
+      notification.error({ message: "Failed to load drivers" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -20,12 +25,10 @@ const Driver = () => {
   }, []);
 
   const handleBanDriver = (driverId) => {
-    // Thực hiện hành động ban driver ở đây, ví dụ: gọi API để ban driver
     console.log(`Banning driver with ID: ${driverId}`);
   };
 
   const handleUnbanDriver = (driverId) => {
-    // Thực hiện hành động unban driver ở đây, ví dụ: gọi API để unban driver
     console.log(`Unbanning driver with ID: ${driverId}`);
   };
 
@@ -48,7 +51,9 @@ const Driver = () => {
       title: "Vehicle Type",
       dataIndex: "vehicleType",
       key: "vehicleType",
-      render: (text, record) => <span>{record.taxies.seat ? `${record.taxies.seat} seats` : "N/A"}</span>,
+      render: (text, record) => (
+        <span>{record.taxies?.seat ? `${record.taxies.seat} seats` : "N/A"}</span>
+      ),
     },
     {
       title: "Commission",
@@ -61,7 +66,9 @@ const Driver = () => {
       dataIndex: "isActive",
       key: "isActive",
       render: (isActive) => (
-        <span className={`${isActive ? "text-green-500" : "text-red-500"}`}>{isActive ? "Active" : "Inactive"}</span>
+        <span className={`${isActive ? "text-green-500" : "text-red-500"}`}>
+          {isActive ? "Active" : "Inactive"}
+        </span>
       ),
     },
     {
@@ -69,7 +76,9 @@ const Driver = () => {
       dataIndex: "isDelete",
       key: "isDelete",
       render: (isDelete) => (
-        <span className={`${isDelete ? "text-red-500" : "text-green-500"}`}>{isDelete ? "Banned" : "Online"}</span>
+        <span className={`${isDelete ? "text-red-500" : "text-green-500"}`}>
+          {isDelete ? "Banned" : "Online"}
+        </span>
       ),
     },
     {
@@ -106,6 +115,7 @@ const Driver = () => {
           dataSource={drivers}
           columns={columns}
           pagination={true}
+          loading={loading}
           className="transparent-table"
           style={{ background: "transparent" }}
         />

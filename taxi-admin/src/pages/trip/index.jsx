@@ -1,114 +1,22 @@
 import { Button, Table } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Create from "./create";
+import { getBookings } from "~/api/booking";
 
 const Trip = () => {
   // State to handle modal visibility and trip data
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [trips, setTrips] = useState([
-    {
-      key: "1",
-      tripId: "TRP001",
-      driverName: "John Doe",
-      startLocation: "New York",
-      endLocation: "Los Angeles",
-      startLocationDetails: "123, Broadway St, New York, NY 10001",
-      endLocationDetails: "456, Hollywood Blvd, Los Angeles, CA 90028",
-      distance: 4500,
-      status: "Completed",
-    },
-    {
-      key: "2",
-      tripId: "TRP002",
-      driverName: "Jane Smith",
-      startLocation: "Chicago",
-      endLocation: "Houston",
-      startLocationDetails: "789, Lakeshore Dr, Chicago, IL 60611",
-      endLocationDetails: "101, Main St, Houston, TX 77002",
-      distance: 1500,
-      status: "In Progress",
-    },
-    {
-      key: "3",
-      tripId: "TRP003",
-      driverName: "Alex Johnson",
-      startLocation: "Miami",
-      endLocation: "Atlanta",
-      startLocationDetails: "202, Ocean Dr, Miami, FL 33139",
-      endLocationDetails: "303, Peachtree St, Atlanta, GA 30303",
-      distance: 600,
-      status: "Cancelled",
-    },
-    {
-      key: "4",
-      tripId: "TRP004",
-      driverName: "Emily Davis",
-      startLocation: "San Francisco",
-      endLocation: "Las Vegas",
-      startLocationDetails: "404, Market St, San Francisco, CA 94103",
-      endLocationDetails: "505, Fremont St, Las Vegas, NV 89101",
-      distance: 900,
-      status: "Completed",
-    },
-    {
-      key: "5",
-      tripId: "TRP005",
-      driverName: "Michael Brown",
-      startLocation: "Seattle",
-      endLocation: "Denver",
-      startLocationDetails: "606, Pike St, Seattle, WA 98101",
-      endLocationDetails: "707, Colfax Ave, Denver, CO 80204",
-      distance: 2000,
-      status: "In Progress",
-    },
-  ]);
-
+  const [bookings, setBookings] = useState([]);
   // Define columns for the trips table
-  const columns = [
-    {
-      title: "Trip ID",
-      dataIndex: "tripId",
-      key: "tripId",
-    },
-    {
-      title: "Driver Name",
-      dataIndex: "driverName",
-      key: "driverName",
-    },
-    {
-      title: "Start Location",
-      dataIndex: "startLocation",
-      key: "startLocation",
-    },
-    {
-      title: "End Location",
-      dataIndex: "endLocation",
-      key: "endLocation",
-    },
-    {
-      title: "Distance (km)",
-      dataIndex: "distance",
-      key: "distance",
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status) => (
-        <span
-          className={`${
-            status === "Completed"
-              ? "text-green-500"
-              : status === "In Progress"
-              ? "text-yellow-500"
-              : "text-red-500"
-          }`}
-        >
-          {status}
-        </span>
-      ),
-    },
-  ];
+
+  const fetchBookings = async () => {
+    try {
+      const response = await getBookings();
+      setBookings(response.data || response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // Functions to handle modal
   const showModal = () => {
@@ -121,8 +29,49 @@ const Trip = () => {
 
   const handleCreate = (newTrip) => {
     // Assign a new key and add the new trip to the list
-    setTrips([...trips, { key: trips.length + 1, ...newTrip }]);
+    // setTrips([...trips, { key: trips.length + 1, ...newTrip }]);
   };
+
+  useEffect(() => {
+    fetchBookings();
+    document.title = "Admin | Trips";
+  }, []);
+
+  const columns = [
+    {
+      title: "STT",
+      render: (text, record, index) => <span>{index + 1}</span>,
+    },
+    {
+      title: "Driver",
+      dataIndex: "driver",
+      key: "driver",
+    },
+    {
+      title: "Passenger",
+      dataIndex: "passenger",
+      key: "passenger",
+    },
+    {
+      title: "Start Location",
+      dataIndex: "startLocation",
+      key: "startLocation",
+    },
+    {
+      title: "End Location",
+      dataIndex: "endLocation",
+      key: "endLocation",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (text, record) => (
+        <Button type="primary" danger>
+          Delete
+        </Button> 
+      ),
+    }
+  ];
 
   return (
     <div className="px-5 py-12">
@@ -134,7 +83,7 @@ const Trip = () => {
       </div>
       <div className="bg-[#222E3C] rounded-lg p-5">
         <Table
-          dataSource={trips}
+          dataSource={bookings}
           columns={columns}
           pagination={true}
           className="transparent-table"
@@ -142,16 +91,16 @@ const Trip = () => {
             expandedRowRender: (record) => (
               <Table
                 columns={[
-                  { title: 'Detail', dataIndex: 'detail', key: 'detail' },
-                  { title: 'Value', dataIndex: 'value', key: 'value' },
+                  { title: "Detail", dataIndex: "detail", key: "detail" },
+                  { title: "Value", dataIndex: "value", key: "value" },
                 ]}
                 dataSource={[
-                  { key: 1, detail: 'Start Location Details', value: record.startLocationDetails },
-                  { key: 2, detail: 'End Location Details', value: record.endLocationDetails },
+                  { key: 1, detail: "Start Location Details", value: record.startLocationDetails },
+                  { key: 2, detail: "End Location Details", value: record.endLocationDetails },
                 ]}
                 pagination={false}
                 showHeader={false}
-                style={{ background: 'transparent' }}
+                style={{ background: "transparent" }}
               />
             ),
             rowExpandable: (record) => record.startLocationDetails || record.endLocationDetails,
@@ -160,11 +109,7 @@ const Trip = () => {
         />
       </div>
       {/* Modal for creating new trips */}
-      <Create
-        isVisible={isModalVisible}
-        onClose={handleCancel}
-        onCreate={handleCreate}
-      />
+      <Create isVisible={isModalVisible} onClose={handleCancel} onCreate={handleCreate} />
     </div>
   );
 };
