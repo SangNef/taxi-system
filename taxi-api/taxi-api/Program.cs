@@ -8,6 +8,7 @@ using taxi_api.Models;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure DbContext
@@ -52,9 +53,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", policyBuilder =>
     {
-        policyBuilder.WithOrigins("http://localhost:5173", "http://localhost:5174")
-                     .AllowAnyMethod()
-                     .AllowAnyHeader();
+
+        builder.WithOrigins("http://localhost:5173", "http://localhost:5174")
+               .AllowAnyMethod()
+               .AllowAnyHeader();
     });
 });
 
@@ -67,7 +69,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Taxi API", Version = "v1" });
 
-    // Configure JWT Bearer token for Swagger
+    // Cấu hình JWT Bearer token cho Swagger
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -87,6 +89,10 @@ builder.Services.AddSwaggerGen(c =>
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
                 },
+
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header
             },
             new List<string>()
         }
