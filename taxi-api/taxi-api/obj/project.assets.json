@@ -8103,11 +8103,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\tuhun\\OneDrive\\Desktop\\taxihihi\\taxi-system\\taxi-api\\taxi-api\\taxi-api.csproj",
+      "projectUniqueName": "C:\\Users\\tuhun\\OneDrive\\Desktop\\Project-Taxi\\taxi-system\\taxi-api\\taxi-api\\taxi-api.csproj",
       "projectName": "taxi-api",
-      "projectPath": "C:\\Users\\tuhun\\OneDrive\\Desktop\\taxihihi\\taxi-system\\taxi-api\\taxi-api\\taxi-api.csproj",
+      "projectPath": "C:\\Users\\tuhun\\OneDrive\\Desktop\\Project-Taxi\\taxi-system\\taxi-api\\taxi-api\\taxi-api.csproj",
       "packagesPath": "C:\\Users\\tuhun\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\tuhun\\OneDrive\\Desktop\\taxihihi\\taxi-system\\taxi-api\\taxi-api\\obj\\",
+      "outputPath": "C:\\Users\\tuhun\\OneDrive\\Desktop\\Project-Taxi\\taxi-system\\taxi-api\\taxi-api\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\tuhun\\AppData\\Roaming\\NuGet\\NuGet.Config",

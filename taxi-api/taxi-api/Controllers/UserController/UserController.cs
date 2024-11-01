@@ -36,6 +36,7 @@ namespace taxi_api.Controllers.UserController
             var booking = await _context.Bookings
                 .Include(b => b.Customer)
                 .Include(b => b.Arival)
+                .Include(b => b.BookingDetails)
                 .FirstOrDefaultAsync(b => b.Code == code);
 
             if (booking == null)
@@ -48,8 +49,69 @@ namespace taxi_api.Controllers.UserController
                 });
             }
 
-            // Return trip information
-            return Ok(new
+            // Che số điện thoại
+            string maskedPhone = MaskPhoneNumber(booking.Customer.Phone);
+
+            // Lấy thông tin địa điểm pick up
+            var pickUpWard = await _context.Wards
+                .Where(w => w.Id == booking.Arival.PickUpId)
+                .Include(w => w.District)
+                .ThenInclude(d => d.Province)
+                .Select(w => new
+                {
+                    WardId = w.Id,
+                    WardName = w.Name,
+                    District = new
+                    {
+                        DistrictId = w.District.Id,
+                        DistrictName = w.District.Name,
+                    },
+                    Province = new
+                    {
+                        ProvinceId = w.District.Province.Id,
+                        ProvinceName = w.District.Province.Name,
+                        ProvincePrice = w.District.Province.Price
+                    }
+                })
+                .FirstOrDefaultAsync();
+
+            // Lấy thông tin địa điểm drop off
+            var dropOffWard = await _context.Wards
+                .Where(w => w.Id == booking.Arival.DropOffId)
+                .Include(w => w.District)
+                .ThenInclude(d => d.Province)
+                .Select(w => new
+                {
+                    WardId = w.Id,
+                    WardName = w.Name,
+                    District = new
+                    {
+                        DistrictId = w.District.Id,
+                        DistrictName = w.District.Name,
+                    },
+                    Province = new
+                    {
+                        ProvinceId = w.District.Province.Id,
+                        ProvinceName = w.District.Province.Name,
+                        ProvincePrice = w.District.Province.Price
+                    }
+                })
+                .FirstOrDefaultAsync();
+
+            // Lấy tất cả thông tin taxi
+            var taxies = await _context.Taxies.ToListAsync();
+
+            var driverAssignments = booking.BookingDetails
+                .Select(bd => new
+                {
+                    bd.BookingId,
+                    bd.Status,
+                    bd.TaxiId,
+                    TaxiDetails = taxies.FirstOrDefault(t => t.Id == bd.TaxiId)
+                })
+                .ToList();
+
+            var response = new
             {
                 code = CommonErrorCodes.Success,
                 data = new
@@ -63,20 +125,52 @@ namespace taxi_api.Controllers.UserController
                     Customer = new
                     {
                         booking.Customer.Name,
-                        booking.Customer.Phone
+                        Phone = maskedPhone
                     },
-                    Arival = new
+                    ArivalDetails = new
                     {
                         booking.Arival.PickUpAddress,
                         booking.Arival.DropOffAddress,
-                        booking.Arival.Price
-                    }
+                        booking.Arival.Price,
+                        PickUpId = booking.Arival.PickUpId,
+                        PickUpDetails = pickUpWard,
+                        DropOffId = booking.Arival.DropOffId,
+                        DropOffDetails = dropOffWard
+                    },
+                    DriverAssignments = driverAssignments
                 },
                 message = "Success"
-            });
+            };
+
+            if (!driverAssignments.Any(da => da.TaxiDetails != null))
+            {
+                response = new
+                {
+                    code = CommonErrorCodes.InvalidData,
+                    data = response.data,
+                    message = "Chuyến đi này chưa có tài xế."
+                };
+            }
+
+            return Ok(response);
         }
 
+<<<<<<< HEAD
+
+
+        private string MaskPhoneNumber(string phoneNumber)
+        {
+            if (string.IsNullOrEmpty(phoneNumber) || phoneNumber.Length < 7)
+                return phoneNumber; 
+
+            return phoneNumber.Substring(0, 4) + "xxx" + phoneNumber.Substring(phoneNumber.Length - 3);
+        }
+
+
+        [HttpGet("wards/search")]
+=======
         [HttpGet("search-location")]
+>>>>>>> master
         public async Task<IActionResult> GetWardInfoByName([FromQuery] string wardName)
         {
             if (string.IsNullOrEmpty(wardName))
