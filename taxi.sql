@@ -9,7 +9,6 @@ CREATE TABLE Admins (
     phone NVARCHAR(50),
     email NVARCHAR(255),
     password NVARCHAR(255),
-    is_delete BIT,
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME DEFAULT GETDATE(),
     deleted_at DATETIME NULL,
@@ -21,11 +20,12 @@ CREATE TABLE Drivers (
     phone NVARCHAR(50),
     password NVARCHAR(255),
     is_active BIT DEFAULT 1,
-    is_delete BIT,
     point INT,
     commission INT,
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME DEFAULT GETDATE(),
+	deleted_at DATETIME NULL
+
 );
 
 CREATE TABLE Taxies (
@@ -96,16 +96,16 @@ CREATE TABLE Arivals (
 
 CREATE TABLE Bookings (
     id INT PRIMARY KEY IDENTITY(1,1),
-	code VARCHAR(20),
+    code VARCHAR(20),
     customer_id INT,
     arival_id INT,
     invite_id INT,
-    start_at DATETIME,
+    start_at DATE,
     end_at DATETIME,
     count INT,
     price DECIMAL(18, 2),
     status NVARCHAR(50),
-	has_full BIT DEFAULT 0,
+    has_full BIT DEFAULT 0,
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME DEFAULT GETDATE(),
     deleted_at DATETIME NULL,
@@ -118,7 +118,8 @@ CREATE TABLE BookingDetails (
     booking_id INT,
     taxi_id INT,
     status NVARCHAR(50),
-    commission DECIMAL(3, 2),
+    commission INT,
+    total_price DECIMAL(18, 2),
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME DEFAULT GETDATE(),
     deleted_at DATETIME NULL,

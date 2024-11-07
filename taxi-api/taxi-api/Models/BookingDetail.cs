@@ -13,15 +13,13 @@ public partial class BookingDetail
 
     public string? Status { get; set; }
 
+    public int? Commission { get; set; }
+
     public DateTime? CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
 
     public DateTime? DeletedAt { get; set; }
-
-    public int? Commission { get; set; }
-
-    public decimal? TotalPrice { get; set; }
 
     public virtual Booking? Booking { get; set; }
 
