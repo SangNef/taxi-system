@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace taxi_api.Controllers.AdminController
 {
-    [Route("api/[controller]")]
+    [Route("api/admin")]
     [ApiController]
     public class AdminController : ControllerBase
     {
@@ -67,17 +67,13 @@ namespace taxi_api.Controllers.AdminController
             }
 
             var token = GenerateJwtToken(admin);
-            var refreshToken = GenerateRefreshToken();
-
-            _cache.Set(refreshToken, admin.Email, TimeSpan.FromMinutes(30));
 
             return Ok(new
             {
                 code = CommonErrorCodes.Success,
                 data = new
                 {
-                    token,
-                    refreshToken
+                    token
                 },
                 message = "Admin logged in successfully."
             });
@@ -112,6 +108,31 @@ namespace taxi_api.Controllers.AdminController
                 rng.GetBytes(randomNumber);
                 return Convert.ToBase64String(randomNumber);
             }
+        }
+        [HttpGet("get-all-taxis")]
+        public async Task<IActionResult> GetAllTaxis()
+        {
+            var taxis = _context.Taxies
+                .Select(t => new
+                {
+                    t.Id,
+                    t.DriverId,
+                    t.Name,
+                    t.LicensePlate,
+                    t.Seat,
+                    t.InUse,
+                    t.CreatedAt,
+                    t.UpdatedAt,
+                    t.DeletedAt
+                })
+                .ToList();
+
+            return Ok(new
+            {
+                code = CommonErrorCodes.Success,
+                data = taxis,
+                message = "List of all taxis retrieved successfully."
+            });
         }
     }
 }

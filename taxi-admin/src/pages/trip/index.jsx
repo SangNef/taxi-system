@@ -12,7 +12,7 @@ const Trip = () => {
   const fetchBookings = async () => {
     try {
       const response = await getBookings();
-      setBookings(response.data || response);
+      setBookings(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -43,24 +43,56 @@ const Trip = () => {
       render: (text, record, index) => <span>{index + 1}</span>,
     },
     {
-      title: "Driver",
-      dataIndex: "driver",
-      key: "driver",
-    },
-    {
-      title: "Passenger",
-      dataIndex: "passenger",
-      key: "passenger",
+      title: "Seat",
+      dataIndex: "passengerCount",
+      key: "passengerCount",
     },
     {
       title: "Start Location",
       dataIndex: "startLocation",
       key: "startLocation",
+      render: (text, record) => (<p>{record.arivalDetails.pickUpDetails.province.provinceName}</p>)
     },
     {
       title: "End Location",
       dataIndex: "endLocation",
       key: "endLocation",
+      render: (text, record) => (<p>{record.arivalDetails.dropOffDetails.province.provinceName}</p>)
+    },
+    {
+      title: "Start Date",
+      dataIndex: "startDate",
+      key: "startDate",
+      render: (text, record) => (<p>{new Date(record.startAt).toLocaleDateString()}</p>)
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => {
+        const statusLabels = {
+          1: "Created",
+          2: "Driver Accepted",
+          3: "In Trip",
+          4: "Completed",
+          5: "Cancelled"
+        };
+    
+        // Define CSS classes for each status
+        const statusStyles = {
+          1: "text-blue-500 bg-blue-100 px-2 py-1 rounded",      // Created - blue
+          2: "text-orange-500 bg-orange-100 px-2 py-1 rounded",  // Driver Accepted - orange
+          3: "text-yellow-500 bg-yellow-100 px-2 py-1 rounded",  // In Trip - yellow
+          4: "text-green-500 bg-green-100 px-2 py-1 rounded",    // Completed - green
+          5: "text-red-500 bg-red-100 px-2 py-1 rounded"         // Cancelled - red
+        };
+    
+        return (
+          <span className={statusStyles[status] || "text-gray-500 bg-gray-100 px-2 py-1 rounded"}>
+            {statusLabels[status] || "Unknown"}
+          </span>
+        );
+      }
     },
     {
       title: "Action",
@@ -86,7 +118,7 @@ const Trip = () => {
           dataSource={bookings}
           columns={columns}
           pagination={true}
-          className="transparent-table"
+          className="transparent-table !bg-transparent"
           expandable={{
             expandedRowRender: (record) => (
               <Table

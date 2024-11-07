@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\tuhun\\OneDrive\\Desktop\\taxihihi\\taxi-system\\taxi-api\\taxi-api\\taxi-api.csproj": {}
+    "C:\\Users\\admin\\Desktop\\Project\\Taxi-net\\taxi-api\\taxi-api\\taxi-api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\tuhun\\OneDrive\\Desktop\\taxihihi\\taxi-system\\taxi-api\\taxi-api\\taxi-api.csproj": {
+    "C:\\Users\\admin\\Desktop\\Project\\Taxi-net\\taxi-api\\taxi-api\\taxi-api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\tuhun\\OneDrive\\Desktop\\taxihihi\\taxi-system\\taxi-api\\taxi-api\\taxi-api.csproj",
+        "projectUniqueName": "C:\\Users\\admin\\Desktop\\Project\\Taxi-net\\taxi-api\\taxi-api\\taxi-api.csproj",
         "projectName": "taxi-api",
-        "projectPath": "C:\\Users\\tuhun\\OneDrive\\Desktop\\taxihihi\\taxi-system\\taxi-api\\taxi-api\\taxi-api.csproj",
-        "packagesPath": "C:\\Users\\tuhun\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\tuhun\\OneDrive\\Desktop\\taxihihi\\taxi-system\\taxi-api\\taxi-api\\obj\\",
+        "projectPath": "C:\\Users\\admin\\Desktop\\Project\\Taxi-net\\taxi-api\\taxi-api\\taxi-api.csproj",
+        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\admin\\Desktop\\Project\\Taxi-net\\taxi-api\\taxi-api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\tuhun\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -98,7 +98,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

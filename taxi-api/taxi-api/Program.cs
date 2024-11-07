@@ -2,25 +2,31 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using taxi_api.Seeder; // Thêm namespace cho SeederAdmin
+using taxi_api.Seeder; // Namespace for SeederAdmin
 using System.Text;
 using taxi_api.Models;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Cấu hình DbContext
+// Configure DbContext
 builder.Services.AddDbContext<TaxiContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.")));
 
-// Cấu hình PasswordHasher cho Driver và Admin
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+});
+// Configure PasswordHasher for Driver and Admin
 builder.Services.AddScoped<IPasswordHasher<Driver>, PasswordHasher<Driver>>();
 builder.Services.AddScoped<IPasswordHasher<Admin>, PasswordHasher<Admin>>();
 
 builder.Services.AddMemoryCache();
 
-// Cấu hình JWT
+// Configure JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
 
@@ -31,33 +37,34 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    options.TokenValidationParameters = new TokenValidationParameters
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings["Issuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(key)
+        ValidIssuer = builder.Configuration["Jwt:Issuer"], 
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])) // Thay đổi từ "Key" thành "Jwt:Key"
     };
 });
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin", builder =>
+    options.AddPolicy("AllowSpecificOrigin", policyBuilder =>
     {
-        builder.WithOrigins("http://localhost:5173", "http://localhost:5174")
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        policyBuilder.WithOrigins("http://localhost:5173", "http://localhost:5174")
+                     .AllowAnyMethod()
+                     .AllowAnyHeader();
     });
 });
 
-// Thêm dịch vụ cho Controller
+
+// Add services for Controllers
 builder.Services.AddControllers();
 
-// Cấu hình Swagger cho API
+// Configure Swagger for API documentation with JWT integration
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Taxi API", Version = "v1" });
@@ -72,51 +79,45 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer"
     });
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
+            new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
-                },
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In = ParameterLocation.Header
+                }
             },
-            new List<string>()
+            new string[] { }
         }
     });
 });
 
 var app = builder.Build();
 
-// Middleware trong quá trình phát triển
+// Middleware during development
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// Sử dụng HTTPS
+// Enable HTTPS
 app.UseHttpsRedirection();
 
 app.UseCors("AllowSpecificOrigin");
 
-// Kích hoạt xác thực JWT
-app.UseAuthentication(); // Thêm xác thực JWT vào middleware pipeline
+// Enable JWT Authentication
+app.UseAuthentication(); 
 app.UseAuthorization();
 
-// Ánh xạ các controller
+// Map controllers
 app.MapControllers();
 
-// Chạy SeederAdmin để seed dữ liệu admin nếu chưa có
+//Run SeederAdmin to seed admin data if not present
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    SeederAdmin.Initialize(services);  // Thêm SeederAdmin để chạy seed dữ liệu
+    SeederAdmin.Initialize(services);  // Initialize SeederAdmin for data seeding
 }
 
 app.Run();

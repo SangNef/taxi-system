@@ -10,9 +10,6 @@ namespace taxi_api.DTO
 
         public int? CustomerId { get; set; } 
 
-        [Required(ErrorMessage = "Start time is required.")]
-        public DateTime StartTime { get; set; }
-
         [Required(ErrorMessage = "Count is required.")]
         public int Count { get; set; }
 
@@ -28,8 +25,7 @@ namespace taxi_api.DTO
 
         public int? DropOffId { get; set; } 
 
-        [Required(ErrorMessage = "Drop-off address is required.")]
-        public string DropOffAddress { get; set; } 
+        public string? DropOffAddress { get; set; } 
         public bool HasFull { get; set; }
 
         public DateTime CreatedAt { get; set; } 
