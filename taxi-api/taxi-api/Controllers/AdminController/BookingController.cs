@@ -241,7 +241,7 @@ namespace taxi_api.Controllers.AdminController
                 Code = "XG" + DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 CustomerId = customer.Id,
                 ArivalId = arival.Id,
-                StartAt = DateTime.UtcNow,
+                StartAt = DateOnly.FromDateTime(DateTime.UtcNow),
                 EndAt = null,
                 Count = request.Count,
                 Price = request.Price,
@@ -373,7 +373,7 @@ namespace taxi_api.Controllers.AdminController
 
             // Cập nhật thông tin booking
             booking.CustomerId = customer.Id;
-            booking.StartAt = request.StartTime;
+            booking.StartAt = request.StartAt;
             booking.Count = request.Count;
             booking.Price = request.Price;
             booking.HasFull = request.HasFull;
@@ -388,9 +388,8 @@ namespace taxi_api.Controllers.AdminController
             });
         }
 
-
-            [HttpDelete("delete/{bookingId}")]
-            public async Task<IActionResult> DeleteBooking(int bookingId)
+        [HttpDelete("delete/{bookingId}")]
+        public async Task<IActionResult> DeleteBooking(int bookingId)
             {
                 var booking = await _context.Bookings.FirstOrDefaultAsync(b => b.Id == bookingId);
                 if (booking == null)

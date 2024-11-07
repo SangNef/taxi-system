@@ -26,7 +26,6 @@ namespace taxi_api.Controllers.AdminController
                      d.Fullname,
                      d.Phone,
                      d.IsActive,
-                     d.IsDelete,
                      d.Point,
                      d.Commission,
                      d.CreatedAt,

@@ -15,7 +15,7 @@ public partial class Booking
 
     public int? InviteId { get; set; }
 
-    public DateTime? StartAt { get; set; }
+    public DateOnly? StartAt { get; set; }
 
     public DateTime? EndAt { get; set; }
 

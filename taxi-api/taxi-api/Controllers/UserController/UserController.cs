@@ -151,7 +151,10 @@ namespace taxi_api.Controllers.UserController
             return Ok(response);
         }
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> master
         private string MaskPhoneNumber(string phoneNumber)
         {
             if (string.IsNullOrEmpty(phoneNumber) || phoneNumber.Length < 7)
@@ -159,6 +162,10 @@ namespace taxi_api.Controllers.UserController
 
             return phoneNumber.Substring(0, 4) + "xxx" + phoneNumber.Substring(phoneNumber.Length - 3);
         }
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
         [HttpGet("search-location")]
         public async Task<IActionResult> GetWardInfoByName([FromQuery] string wardName)
         {
@@ -307,7 +314,7 @@ namespace taxi_api.Controllers.UserController
                 Code = "XG" + DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 CustomerId = customer.Id,
                 ArivalId = arival.Id,
-                StartAt = DateTime.UtcNow,
+                StartAt = DateOnly.FromDateTime(DateTime.UtcNow),
                 EndAt = null,
                 Count = request.Count,
                 Price = request.Price,
