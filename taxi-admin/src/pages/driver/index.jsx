@@ -1,16 +1,17 @@
 import { Button, Popconfirm, Table, notification } from "antd";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { getDrivers } from "~/api/driver";
 
 const Driver = () => {
-  const [drivers, setDrivers] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
+  const [drivers, setDrivers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchDrivers = async () => {
     setLoading(true);
     try {
       const response = await getDrivers();
-      setDrivers(response.data || response); // Adjust according to your API response structure
+      setDrivers(response.data.$values);
+      console.log(response.data.values);
     } catch (error) {
       console.error(error);
       notification.error({ message: "Failed to load drivers" });

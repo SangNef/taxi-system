@@ -155,8 +155,6 @@ namespace taxi_api.Controllers.UserController
             return Ok(response);
         }
 
-<<<<<<< HEAD
-
 
         private string MaskPhoneNumber(string phoneNumber)
         {
@@ -167,10 +165,7 @@ namespace taxi_api.Controllers.UserController
         }
 
 
-        [HttpGet("wards/search")]
-=======
         [HttpGet("search-location")]
->>>>>>> master
         public async Task<IActionResult> GetWardInfoByName([FromQuery] string wardName)
         {
             if (string.IsNullOrEmpty(wardName))
