@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\tuhun\\OneDrive\\Desktop\\Project-Taxi\\taxi-system\\taxi-api\\",
+  "WorkspaceRootPath": "C:\\Users\\admin\\Desktop\\Project\\Taxi-net\\taxi-api\\",
   "Documents": [
     {
       "AbsoluteMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|c:\\users\\tuhun\\onedrive\\desktop\\project-taxi\\taxi-system\\taxi-api\\taxi-api\\controllers\\drivercontroller\\drivercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -47,23 +47,27 @@
       "RelativeMoniker": "D:1:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|solutionrelative:taxi-api\\controllers\\admincontroller\\bookingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|c:\\users\\tuhun\\onedrive\\desktop\\project-taxi\\taxi-system\\taxi-api\\taxi-api\\models\\taxicontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|c:\\users\\admin\\desktop\\project\\taxi-net\\taxi-api\\taxi-api\\models\\taxicontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|solutionrelative:taxi-api\\models\\taxicontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|c:\\users\\tuhun\\onedrive\\desktop\\project-taxi\\taxi-system\\taxi-api\\taxi-api\\models\\bookingdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|solutionrelative:taxi-api\\models\\bookingdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|c:\\users\\admin\\desktop\\project\\taxi-net\\taxi-api\\taxi-api\\models\\commonerrorcodes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|solutionrelative:taxi-api\\models\\commonerrorcodes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|c:\\users\\tuhun\\onedrive\\desktop\\project-taxi\\taxi-system\\taxi-api\\taxi-api\\models\\driver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|c:\\users\\admin\\desktop\\project\\taxi-net\\taxi-api\\taxi-api\\controllers\\admincontroller\\admincommissioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|solutionrelative:taxi-api\\controllers\\admincontroller\\admincommissioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|c:\\users\\admin\\desktop\\project\\taxi-net\\taxi-api\\taxi-api\\models\\driver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|solutionrelative:taxi-api\\models\\driver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|c:\\users\\tuhun\\onedrive\\desktop\\project-taxi\\taxi-system\\taxi-api\\taxi-api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|solutionrelative:taxi-api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|c:\\users\\admin\\desktop\\project\\taxi-net\\taxi-api\\taxi-api\\models\\notification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|solutionrelative:taxi-api\\models\\notification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|c:\\users\\tuhun\\onedrive\\desktop\\project-taxi\\taxi-system\\taxi-api\\taxi-api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "AbsoluteMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|c:\\users\\admin\\desktop\\project\\taxi-net\\taxi-api\\taxi-api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|solutionrelative:taxi-api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
@@ -127,12 +131,12 @@
       "RelativeMoniker": "D:2:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|solutionrelative:taxi-api\\controllers\\admincontroller\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:2:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|c:\\users\\tuhun\\onedrive\\desktop\\project-taxi\\taxi-system\\taxi-api\\taxi-api\\controllers\\admincontroller\\bookingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:2:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|solutionrelative:taxi-api\\controllers\\admincontroller\\bookingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:2:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|c:\\users\\admin\\desktop\\project\\taxi-net\\taxi-api\\taxi-api\\controllers\\usercontroller\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:2:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|solutionrelative:taxi-api\\controllers\\usercontroller\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:2:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|c:\\users\\tuhun\\onedrive\\desktop\\project-taxi\\taxi-system\\taxi-api\\taxi-api\\controllers\\admincontroller\\admindrivercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:2:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|solutionrelative:taxi-api\\controllers\\admincontroller\\admindrivercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:2:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|c:\\users\\admin\\desktop\\project\\taxi-net\\taxi-api\\taxi-api\\controllers\\admincontroller\\bookingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:2:0:{61BF8C69-7845-4F75-ADA5-ECD628275FF7}|taxi-api\\taxi-api.csproj|solutionrelative:taxi-api\\controllers\\admincontroller\\bookingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -171,8 +175,7 @@
               "RelativeToolTip": "taxi-api\\DTO\\BookingRequestDto.cs",
               "ViewState": "AQIAAAsAAAAAAAAAAAAmwBgAAAAqAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T17:57:49.719Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-07T03:27:33.741Z"
             },
             {
               "$type": "Document",
@@ -184,7 +187,7 @@
               "RelativeToolTip": "taxi-api\\Controllers\\WeatherForecastController.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T12:15:58.744Z"
+              "WhenOpened": "2024-10-31T08:06:56.974Z"
             },
             {
               "$type": "Document",
@@ -209,8 +212,7 @@
               "RelativeToolTip": "taxi-api\\Helpers\\FindDriverHelper.cs",
               "ViewState": "AQIAACoAAAAAAAAAAAAYwDIAAABPAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T11:42:56.579Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-31T04:03:14.855Z"
             },
             {
               "$type": "Document",
@@ -254,14 +256,13 @@
               "$type": "Document",
               "DocumentIndex": 10,
               "Title": "BookingController.cs",
-              "DocumentMoniker": "C:\\Users\\tuhun\\OneDrive\\Desktop\\Project-Taxi\\taxi-system\\taxi-api\\taxi-api\\Controllers\\AdminController\\BookingController.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\Desktop\\Project\\Taxi-net\\taxi-api\\taxi-api\\Controllers\\AdminController\\BookingController.cs",
               "RelativeDocumentMoniker": "taxi-api\\Controllers\\AdminController\\BookingController.cs",
-              "ToolTip": "C:\\Users\\tuhun\\OneDrive\\Desktop\\Project-Taxi\\taxi-system\\taxi-api\\taxi-api\\Controllers\\AdminController\\BookingController.cs",
+              "ToolTip": "C:\\Users\\admin\\Desktop\\Project\\Taxi-net\\taxi-api\\taxi-api\\Controllers\\AdminController\\BookingController.cs",
               "RelativeToolTip": "taxi-api\\Controllers\\AdminController\\BookingController.cs",
               "ViewState": "AQIAAPEAAAAAAAAAAAAIwAABAAAoAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-31T16:57:27.753Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-31T04:01:24.654Z"
             },
             {
               "$type": "Document",
@@ -273,7 +274,7 @@
               "RelativeToolTip": "taxi-api\\DTO\\DriverRegisterDto.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-31T08:06:56.974Z"
+              "WhenOpened": "2024-10-31T03:44:12.207Z"
             },
             {
               "$type": "Document",
@@ -285,8 +286,7 @@
               "RelativeToolTip": "taxi-api\\Models\\TaxiContext.cs",
               "ViewState": "AQIAACAAAAAAAAAAAADwvysAAAA2AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-31T08:01:43.819Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-30T04:51:01.461Z"
             },
             {
               "$type": "Document",
@@ -304,13 +304,13 @@
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "AdminController.cs",
-              "DocumentMoniker": "C:\\Users\\tuhun\\OneDrive\\Desktop\\Project-Taxi\\taxi-system\\taxi-api\\taxi-api\\Controllers\\AdminController\\AdminController.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\Desktop\\Project\\Taxi-net\\taxi-api\\taxi-api\\Controllers\\AdminController\\AdminController.cs",
               "RelativeDocumentMoniker": "taxi-api\\Controllers\\AdminController\\AdminController.cs",
-              "ToolTip": "C:\\Users\\tuhun\\OneDrive\\Desktop\\Project-Taxi\\taxi-system\\taxi-api\\taxi-api\\Controllers\\AdminController\\AdminController.cs",
+              "ToolTip": "C:\\Users\\admin\\Desktop\\Project\\Taxi-net\\taxi-api\\taxi-api\\Controllers\\AdminController\\AdminController.cs",
               "RelativeToolTip": "taxi-api\\Controllers\\AdminController\\AdminController.cs",
               "ViewState": "AQIAAG8AAAAAAAAAAAAAAHUAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-31T04:01:24.654Z",
+              "WhenOpened": "2024-10-29T04:02:11.67Z",
               "EditorCaption": ""
             },
             {
@@ -336,8 +336,7 @@
               "RelativeToolTip": "taxi-api\\Controllers\\AdminController\\AdminDriverController.cs",
               "ViewState": "AQIAABMAAAAAAAAAAAAQwEQAAAAiAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-30T04:51:01.461Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-19T11:08:30.831Z"
             },
             {
               "$type": "Document",
@@ -349,16 +348,15 @@
               "RelativeToolTip": "taxi-api\\Controllers\\UserController\\UserController.cs",
               "ViewState": "AQIAADUBAAAAAAAAAAAAADUBAABBAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-29T12:10:22.651Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-29T09:14:53.606Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "DriverController.cs",
-              "DocumentMoniker": "C:\\Users\\tuhun\\OneDrive\\Desktop\\Project-Taxi\\taxi-system\\taxi-api\\taxi-api\\Controllers\\DriverController\\DriverController.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\Desktop\\Project\\Taxi-net\\taxi-api\\taxi-api\\Controllers\\DriverController\\DriverController.cs",
               "RelativeDocumentMoniker": "taxi-api\\Controllers\\DriverController\\DriverController.cs",
-              "ToolTip": "C:\\Users\\tuhun\\OneDrive\\Desktop\\Project-Taxi\\taxi-system\\taxi-api\\taxi-api\\Controllers\\DriverController\\DriverController.cs",
+              "ToolTip": "C:\\Users\\admin\\Desktop\\Project\\Taxi-net\\taxi-api\\taxi-api\\Controllers\\DriverController\\DriverController.cs",
               "RelativeToolTip": "taxi-api\\Controllers\\DriverController\\DriverController.cs",
               "ViewState": "AQIAAFAAAAAAAAAAAAAgwF4AAAAiAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -449,8 +447,7 @@
               "RelativeToolTip": "taxi-api\\Controllers\\DriverController\\DriverTaxiController.cs",
               "ViewState": "AQIAAA4AAAAAAAAAAAAAwE8AAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-29T04:00:00.765Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-29T04:00:00.765Z"
             },
             {
               "$type": "Document",
@@ -461,7 +458,7 @@
               "ToolTip": "C:\\Users\\tuhun\\OneDrive\\Desktop\\Project-Taxi\\taxi-system\\taxi-api\\taxi-api\\Properties\\launchSettings.json",
               "RelativeToolTip": "taxi-api\\Properties\\launchSettings.json",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABcAAAAsAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-10-19T13:54:42.332Z"
             },
             {
@@ -521,7 +518,7 @@
               "ToolTip": "C:\\Users\\tuhun\\OneDrive\\Desktop\\Project-Taxi\\taxi-system\\taxi-api\\taxi-api\\Models\\Arival.cs",
               "RelativeToolTip": "taxi-api\\Models\\Arival.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2024-10-28T08:06:32.576Z"
             },
             {
@@ -546,8 +543,7 @@
               "RelativeToolTip": "taxi-api\\Controllers\\AdminController\\AdminCommissionController.cs",
               "ViewState": "AQIAACUAAAAAAAAAAAAAACMAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-28T08:05:12.473Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-28T08:05:12.473Z"
             },
             {
               "$type": "Document",

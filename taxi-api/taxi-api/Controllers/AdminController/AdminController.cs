@@ -15,7 +15,7 @@ using System.Text.Json;
 
 namespace taxi_api.Controllers.AdminController
 {
-    [Route("api/[controller]")]
+    [Route("api/admin")]
     [ApiController]
     public class AdminController : ControllerBase
     {
