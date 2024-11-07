@@ -13,6 +13,9 @@ using System.Text;
 using taxi_api.Models;
 using taxi_api.Helpers;
 using taxi_api.DTO;
+using Microsoft.AspNetCore.Authorization;
+using System.Reflection.Metadata.Ecma335;
+using System.Text.Json;
 
 namespace taxi_api.Controllers.DriverController
 {
@@ -22,14 +25,14 @@ namespace taxi_api.Controllers.DriverController
     {
         private readonly TaxiContext _context;
         private readonly IPasswordHasher<Driver> _passwordHasher;
-        private readonly IConfiguration _config;
+        private readonly IConfiguration configuation;
         private readonly IMemoryCache _cache;
 
-        public DriverController(TaxiContext context, IPasswordHasher<Driver> passwordHasher, IConfiguration config, IMemoryCache cache)
+        public DriverController(TaxiContext context, IPasswordHasher<Driver> passwordHasher, IConfiguration configuation, IMemoryCache cache)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
-            _config = config;
+            this.configuation = configuation;
             _cache = cache;
         }
 
@@ -72,25 +75,27 @@ namespace taxi_api.Controllers.DriverController
             if (loginDto == null)
                 return BadRequest(new { code = CommonErrorCodes.InvalidData, message = "Invalid login data." });
 
-            // Sử dụng Include để lấy dữ liệu taxies
+            // Tìm tài xế theo số điện thoại
             var driver = _context.Drivers
-                .Include(d => d.Taxies)  // Bao gồm taxies liên quan đến driver
-                .FirstOrDefault(d => d.Phone == loginDto.Phone);
+                .Include(d => d.Taxies) // Bao gồm dữ liệu Taxies khi truy vấn tài xế
+                .FirstOrDefault(x => x.Phone == loginDto.Phone);
 
             if (driver == null)
                 return NotFound(new { code = CommonErrorCodes.NotFound, message = "Driver does not exist." });
 
+            // Kiểm tra mật khẩu đã được băm
             var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(driver, driver.Password, loginDto.Password);
             if (passwordVerificationResult == PasswordVerificationResult.Failed)
                 return Unauthorized(new { code = CommonErrorCodes.Unauthorized, message = "Invalid account or password" });
 
-            if (driver.IsActive != true)
+            // Kiểm tra trạng thái tài khoản
+            if (driver.IsActive == false)
                 return Unauthorized(new { code = CommonErrorCodes.Unauthorized, message = "Driver account is not activated." });
 
             if (driver.DeletedAt != null)
                 return Unauthorized(new { code = CommonErrorCodes.Unauthorized, message = "Your account is locked. Please contact customer support." });
 
-            // Tạo responseData với thông tin từ driver
+            // Định nghĩa responseData để trả về dữ liệu tài xế và token
             var responseData = new
             {
                 driver = new
@@ -116,43 +121,29 @@ namespace taxi_api.Controllers.DriverController
                 }
             };
 
-            var token = GenerateJwtToken(responseData.driver);
-            _cache.Set(driver.Id.ToString(), TimeSpan.FromDays(1));
-
-            return Ok(new { code = CommonErrorCodes.Success, message = "Driver logged in successfully.", data = token });
-        }
-
-        private string GenerateJwtToken(dynamic driverData) 
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var responseDataJson = JsonSerializer.Serialize(responseData);
 
             var claims = new[]
             {
-        new Claim(JwtRegisteredClaimNames.Sub, driverData.Fullname),
+        new Claim(JwtRegisteredClaimNames.Sub, driver.Id.ToString()),
         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        new Claim("Phone", driverData.Phone ?? ""),
-        new Claim("DriverId", driverData.Id.ToString()),
+        new Claim("DriverId", driver.Id.ToString()),
+        new Claim("Phone", driver.Phone ?? ""),
+        new Claim("ResponseData", responseDataJson) 
     };
 
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuation["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
+                issuer: configuation["Jwt:Issuer"],
+                audience: configuation["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_config["Jwt:ExpiryMinutes"])),
-                signingCredentials: credentials);
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: creds);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-
-        private string GenerateRefreshToken()
-        {
-            var randomNumber = new byte[32];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(randomNumber);
-                return Convert.ToBase64String(randomNumber);
-            }
+            return Ok(new { code = CommonErrorCodes.Success, message = "Driver logged in successfully.", token = tokenString });
         }
 
         [HttpPost("create-booking")]
@@ -247,66 +238,6 @@ namespace taxi_api.Controllers.DriverController
 
             return Ok(new { code = CommonErrorCodes.Success, message = "Booking created successfully!", data = booking });
         }
-        [HttpGet("unassigned-bookings")]
-        public async Task<IActionResult> GetUnassignedBookings()
-        {
-            var unassignedBookings = await _context.Bookings
-                .Where(b => !_context.BookingDetails.Any(bd => bd.BookingId == b.Id))
-                .ToListAsync();
-
-            return Ok(new { code = CommonErrorCodes.Success, message = "Successfully retrieved the list of unassigned trips.", data = unassignedBookings });
-        }
-
-        [HttpGet("assigned-bookings")]
-        public async Task<IActionResult> GetAssignedBookings()
-        {
-            var driverIdClaim = User.Claims.FirstOrDefault(c => c.Type == "DriverId")?.Value;
-            if (string.IsNullOrEmpty(driverIdClaim) || !int.TryParse(driverIdClaim, out int driverId))
-            {
-                return Unauthorized(new { code = CommonErrorCodes.Unauthorized, message = "Invalid driver." });
-            }
-
-            var assignedBookings = await _context.Bookings
-                .Where(b => b.InviteId == driverId)
-                .Include(b => b.Customer)
-                .Include(b => b.Arival)
-                .ToListAsync();
-
-            if (!assignedBookings.Any())
-            {
-                return NotFound(new { code = CommonErrorCodes.NotFound, message = "No trips assigned to this driver." });
-            }
-
-            var result = assignedBookings.Select(b => new
-            {
-                BookingId = b.Id,
-                b.Code,
-                b.StartAt,
-                b.EndAt,
-                b.Count,
-                b.Price,
-                b.Status,
-                CustomerName = b.Customer.Name,
-                CustomerPhone = b.Customer.Phone
-            }).ToList();
-
-            return Ok(new { code = CommonErrorCodes.Success, message = "Successfully retrieved assigned trips.", data = result });
-        }
-        [HttpPut("edit-commission/{driverId}")]
-        public async Task<IActionResult> EditCommission(int driverId, [FromBody] CommissionUpdateDto commissionDto)
-        {
-            var driver = await _context.Drivers.FindAsync(driverId);
-            if (driver == null)
-            {
-                return NotFound(new { code = CommonErrorCodes.NotFound, message = "Driver not found." });
-            }
-
-            driver.UpdatedAt = DateTime.Now;
-
-            await _context.SaveChangesAsync();
-
-            return Ok(new { code = CommonErrorCodes.Success, message = "Commission updated successfully.", data = driver });
-        }
-
+       
     }
 }

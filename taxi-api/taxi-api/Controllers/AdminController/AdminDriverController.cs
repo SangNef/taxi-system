@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using taxi_api.DTO;
 using taxi_api.Models;
 
 namespace taxi_api.Controllers.AdminController
@@ -144,6 +145,21 @@ namespace taxi_api.Controllers.AdminController
                 data = new { driverId = driver.Id },
                 message = "Driver account Unban successfully."
             });
+        }
+        [HttpPut("edit-commission/{driverId}")]
+        public async Task<IActionResult> EditCommission(int driverId, [FromBody] CommissionUpdateDto commissionDto)
+        {
+            var driver = await _context.Drivers.FindAsync(driverId);
+            if (driver == null)
+            {
+                return NotFound(new { code = CommonErrorCodes.NotFound, message = "Driver not found." });
+            }
+
+            driver.UpdatedAt = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { code = CommonErrorCodes.Success, message = "Commission updated successfully.", data = driver });
         }
     }
 }

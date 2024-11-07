@@ -49,10 +49,8 @@ namespace taxi_api.Controllers.UserController
                 });
             }
 
-            // Che số điện thoại
             string maskedPhone = MaskPhoneNumber(booking.Customer.Phone);
 
-            // Lấy thông tin địa điểm pick up
             var pickUpWard = await _context.Wards
                 .Where(w => w.Id == booking.Arival.PickUpId)
                 .Include(w => w.District)
@@ -75,7 +73,6 @@ namespace taxi_api.Controllers.UserController
                 })
                 .FirstOrDefaultAsync();
 
-            // Lấy thông tin địa điểm drop off
             var dropOffWard = await _context.Wards
                 .Where(w => w.Id == booking.Arival.DropOffId)
                 .Include(w => w.District)
@@ -98,7 +95,6 @@ namespace taxi_api.Controllers.UserController
                 })
                 .FirstOrDefaultAsync();
 
-            // Lấy tất cả thông tin taxi
             var taxies = await _context.Taxies.ToListAsync();
 
             var driverAssignments = booking.BookingDetails
@@ -154,10 +150,11 @@ namespace taxi_api.Controllers.UserController
 
             return Ok(response);
         }
-
 <<<<<<< HEAD
+=======
 
 
+>>>>>>> 55b83475cc2af5dfe5d7ce8ea44bb120972036dc
         private string MaskPhoneNumber(string phoneNumber)
         {
             if (string.IsNullOrEmpty(phoneNumber) || phoneNumber.Length < 7)
@@ -165,12 +162,13 @@ namespace taxi_api.Controllers.UserController
 
             return phoneNumber.Substring(0, 4) + "xxx" + phoneNumber.Substring(phoneNumber.Length - 3);
         }
+<<<<<<< HEAD
 
 
-        [HttpGet("wards/search")]
+
 =======
+>>>>>>> 55b83475cc2af5dfe5d7ce8ea44bb120972036dc
         [HttpGet("search-location")]
->>>>>>> master
         public async Task<IActionResult> GetWardInfoByName([FromQuery] string wardName)
         {
             if (string.IsNullOrEmpty(wardName))
@@ -208,9 +206,9 @@ namespace taxi_api.Controllers.UserController
 
             if (!wardInfo.Any())
             {
-                return NotFound(new
+                return Ok(new
                 {
-                    code = CommonErrorCodes.NotFound,
+                    code = CommonErrorCodes.Success,
                     data = (object)null,
                     message = "No matching wards found."
                 });
@@ -318,7 +316,7 @@ namespace taxi_api.Controllers.UserController
                 Code = "XG" + DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 CustomerId = customer.Id,
                 ArivalId = arival.Id,
-                StartAt = request.StartTime,
+                StartAt = DateTime.UtcNow,
                 EndAt = null,
                 Count = request.Count,
                 Price = request.Price,

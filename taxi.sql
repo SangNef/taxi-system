@@ -13,8 +13,6 @@ CREATE TABLE Admins (
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME DEFAULT GETDATE(),
     deleted_at DATETIME NULL,
-	RefreshToken VARCHAR(255) NULL,
-	RefreshTokenExpiryTime DATETIME NULL
 );
 
 CREATE TABLE Drivers (
@@ -28,9 +26,6 @@ CREATE TABLE Drivers (
     commission INT,
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME DEFAULT GETDATE(),
-    deleted_at DATETIME NULL,
-	RefreshToken VARCHAR(255) NULL,
-	RefreshTokenExpiryTime DATETIME NULL
 );
 
 CREATE TABLE Taxies (
@@ -123,6 +118,7 @@ CREATE TABLE BookingDetails (
     booking_id INT,
     taxi_id INT,
     status NVARCHAR(50),
+    commission DECIMAL(3, 2),
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME DEFAULT GETDATE(),
     deleted_at DATETIME NULL,
