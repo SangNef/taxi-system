@@ -40,6 +40,26 @@ const Form = ({ slug, onClose }) => {
     }
   };
 
+  const handleCreateBooking = async () => {
+    try {
+      const response = await createBooking({
+        name,
+        phone,
+        count,
+        date,
+        pickup: pickup.value,
+        pickupDetails,
+        dropoff: dropoff.value,
+        dropoffDetails,
+        slug,
+      });
+      console.log("Booking created:", response);
+      onClose();
+    } catch (error) {
+      console.error("Error creating booking:", error);
+    }
+  };
+
   const debounceSearch = useCallback(
     debounce((inputValue, setOptions) => handleSearchLocation(inputValue, setOptions), 500),
     []

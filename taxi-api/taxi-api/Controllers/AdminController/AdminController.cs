@@ -67,17 +67,13 @@ namespace taxi_api.Controllers.AdminController
             }
 
             var token = GenerateJwtToken(admin);
-            var refreshToken = GenerateRefreshToken();
-
-            _cache.Set(refreshToken, admin.Email, TimeSpan.FromMinutes(30));
 
             return Ok(new
             {
                 code = CommonErrorCodes.Success,
                 data = new
                 {
-                    token,
-                    refreshToken
+                    token
                 },
                 message = "Admin logged in successfully."
             });
