@@ -154,10 +154,6 @@ namespace taxi_api.Controllers.UserController
 
             return Ok(response);
         }
-
-<<<<<<< HEAD
-
-
         private string MaskPhoneNumber(string phoneNumber)
         {
             if (string.IsNullOrEmpty(phoneNumber) || phoneNumber.Length < 7)
@@ -167,10 +163,8 @@ namespace taxi_api.Controllers.UserController
         }
 
 
-        [HttpGet("wards/search")]
-=======
+
         [HttpGet("search-location")]
->>>>>>> master
         public async Task<IActionResult> GetWardInfoByName([FromQuery] string wardName)
         {
             if (string.IsNullOrEmpty(wardName))
@@ -208,9 +202,9 @@ namespace taxi_api.Controllers.UserController
 
             if (!wardInfo.Any())
             {
-                return NotFound(new
+                return Ok(new
                 {
-                    code = CommonErrorCodes.NotFound,
+                    code = CommonErrorCodes.Success,
                     data = (object)null,
                     message = "No matching wards found."
                 });
@@ -318,7 +312,7 @@ namespace taxi_api.Controllers.UserController
                 Code = "XG" + DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 CustomerId = customer.Id,
                 ArivalId = arival.Id,
-                StartAt = request.StartTime,
+                StartAt = DateTime.UtcNow,
                 EndAt = null,
                 Count = request.Count,
                 Price = request.Price,

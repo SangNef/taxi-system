@@ -19,6 +19,10 @@ public partial class BookingDetail
 
     public DateTime? DeletedAt { get; set; }
 
+    public int? Commission { get; set; }
+
+    public decimal? TotalPrice { get; set; }
+
     public virtual Booking? Booking { get; set; }
 
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();

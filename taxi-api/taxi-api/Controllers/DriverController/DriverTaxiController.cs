@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using taxi_api.Models;
 using taxi_api.DTO;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace taxi_api.Controllers.DriverController
 {
@@ -19,8 +20,8 @@ namespace taxi_api.Controllers.DriverController
         }
 
         // POST: api/DriverTaxi/add-taxi
-        [HttpPost("add-taxi")]
         [Authorize]
+        [HttpPost("add-taxi")]
         public async Task<IActionResult> AddTaxi([FromBody] TaxiRequestDto request)
         {
             if (request == null || string.IsNullOrEmpty(request.Name) || string.IsNullOrEmpty(request.LicensePlate) || request.Seat <= 0)
@@ -77,5 +78,6 @@ namespace taxi_api.Controllers.DriverController
                 message = "Taxi successfully created."
             });
         }
+
     }
 }
