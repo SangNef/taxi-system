@@ -37,15 +37,15 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    options.TokenValidationParameters = new TokenValidationParameters
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(key)
+        ValidIssuer = builder.Configuration["Jwt:Issuer"], 
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])) // Thay đổi từ "Key" thành "Jwt:Key"
     };
 });
 
@@ -58,6 +58,7 @@ builder.Services.AddCors(options =>
                      .AllowAnyHeader();
     });
 });
+
 
 // Add services for Controllers
 builder.Services.AddControllers();
@@ -78,22 +79,15 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer"
     });
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
+            new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
-                },
-
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In = ParameterLocation.Header
+                }
             },
-            new List<string>()
+            new string[] { }
         }
     });
 });
@@ -113,17 +107,17 @@ app.UseHttpsRedirection();
 app.UseCors("AllowSpecificOrigin");
 
 // Enable JWT Authentication
-app.UseAuthentication(); // Add JWT authentication to the middleware pipeline
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 // Map controllers
 app.MapControllers();
 
-// Run SeederAdmin to seed admin data if not present
-//using (var scope = app.Services.CreateScope())
-//{
-//    var services = scope.ServiceProvider;
-//    SeederAdmin.Initialize(services);  // Initialize SeederAdmin for data seeding
-//}
+//Run SeederAdmin to seed admin data if not present
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    SeederAdmin.Initialize(services);  // Initialize SeederAdmin for data seeding
+}
 
 app.Run();

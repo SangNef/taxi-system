@@ -50,11 +50,12 @@ public partial class TaxiContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Data Source=SANGPC\\SANG;Initial Catalog=taxi;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
 
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Admin>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Admins__3213E83F69A91095");
+            entity.HasKey(e => e.Id).HasName("PK__Admins__3213E83F4ECC94A1");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreatedAt)
@@ -85,7 +86,7 @@ public partial class TaxiContext : DbContext
 
         modelBuilder.Entity<Arival>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Arivals__3213E83FAB84B458");
+            entity.HasKey(e => e.Id).HasName("PK__Arivals__3213E83FB6CC498F");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreatedAt)
@@ -116,16 +117,16 @@ public partial class TaxiContext : DbContext
 
             entity.HasOne(d => d.DropOff).WithMany(p => p.ArivalDropOffs)
                 .HasForeignKey(d => d.DropOffId)
-                .HasConstraintName("FK__Arivals__drop_of__46E78A0C");
+                .HasConstraintName("FK__Arivals__drop_of__59FA5E80");
 
             entity.HasOne(d => d.PickUp).WithMany(p => p.ArivalPickUps)
                 .HasForeignKey(d => d.PickUpId)
-                .HasConstraintName("FK__Arivals__pick_up__45F365D3");
+                .HasConstraintName("FK__Arivals__pick_up__59063A47");
         });
 
         modelBuilder.Entity<Booking>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Bookings__3213E83F153CA877");
+            entity.HasKey(e => e.Id).HasName("PK__Bookings__3213E83FED652A53");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ArivalId).HasColumnName("arival_id");
@@ -165,19 +166,20 @@ public partial class TaxiContext : DbContext
 
             entity.HasOne(d => d.Arival).WithMany(p => p.Bookings)
                 .HasForeignKey(d => d.ArivalId)
-                .HasConstraintName("FK__Bookings__arival__4D94879B");
+                .HasConstraintName("FK__Bookings__arival__60A75C0F");
 
             entity.HasOne(d => d.Customer).WithMany(p => p.Bookings)
                 .HasForeignKey(d => d.CustomerId)
-                .HasConstraintName("FK__Bookings__custom__4CA06362");
+                .HasConstraintName("FK__Bookings__custom__5FB337D6");
         });
 
         modelBuilder.Entity<BookingDetail>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__BookingD__3213E83F41E235B5");
+            entity.HasKey(e => e.Id).HasName("PK__BookingD__3213E83FBA948930");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.BookingId).HasColumnName("booking_id");
+            entity.Property(e => e.Commission).HasColumnName("commission");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
@@ -189,6 +191,7 @@ public partial class TaxiContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("status");
             entity.Property(e => e.TaxiId).HasColumnName("taxi_id");
+            entity.Property(e => e.TotalPrice).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
@@ -196,16 +199,16 @@ public partial class TaxiContext : DbContext
 
             entity.HasOne(d => d.Booking).WithMany(p => p.BookingDetails)
                 .HasForeignKey(d => d.BookingId)
-                .HasConstraintName("FK__BookingDe__booki__52593CB8");
+                .HasConstraintName("FK__BookingDe__booki__656C112C");
 
             entity.HasOne(d => d.Taxi).WithMany(p => p.BookingDetails)
                 .HasForeignKey(d => d.TaxiId)
-                .HasConstraintName("FK__BookingDe__taxi___534D60F1");
+                .HasConstraintName("FK__BookingDe__taxi___66603565");
         });
 
         modelBuilder.Entity<Config>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Configs__3213E83FEFFED00E");
+            entity.HasKey(e => e.Id).HasName("PK__Configs__3213E83FE0936FBC");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ConfigKey)
@@ -230,7 +233,7 @@ public partial class TaxiContext : DbContext
 
         modelBuilder.Entity<Customer>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Customer__3213E83F724CE778");
+            entity.HasKey(e => e.Id).HasName("PK__Customer__3213E83FF5B71D00");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreatedAt)
@@ -254,7 +257,7 @@ public partial class TaxiContext : DbContext
 
         modelBuilder.Entity<District>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__District__3213E83F1687DA3D");
+            entity.HasKey(e => e.Id).HasName("PK__District__3213E83F1EA64139");
 
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
@@ -277,12 +280,12 @@ public partial class TaxiContext : DbContext
 
             entity.HasOne(d => d.Province).WithMany(p => p.Districts)
                 .HasForeignKey(d => d.ProvinceId)
-                .HasConstraintName("FK__Districts__provi__3C69FB99");
+                .HasConstraintName("FK__Districts__provi__4F7CD00D");
         });
 
         modelBuilder.Entity<Driver>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Drivers__3213E83F8E82B480");
+            entity.HasKey(e => e.Id).HasName("PK__Drivers__3213E83FD0B9F8BD");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Commission).HasColumnName("commission");
@@ -315,7 +318,7 @@ public partial class TaxiContext : DbContext
 
         modelBuilder.Entity<Notification>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Notifica__3213E83FC1D627E5");
+            entity.HasKey(e => e.Id).HasName("PK__Notifica__3213E83F770142A7");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Content)
@@ -340,12 +343,12 @@ public partial class TaxiContext : DbContext
 
             entity.HasOne(d => d.Driver).WithMany(p => p.Notifications)
                 .HasForeignKey(d => d.DriverId)
-                .HasConstraintName("FK__Notificat__drive__6E01572D");
+                .HasConstraintName("FK__Notificat__drive__01142BA1");
         });
 
         modelBuilder.Entity<Page>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Pages__3213E83F2E5B2112");
+            entity.HasKey(e => e.Id).HasName("PK__Pages__3213E83FA8A1318F");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreatedAt)
@@ -369,7 +372,7 @@ public partial class TaxiContext : DbContext
 
         modelBuilder.Entity<PageContent>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__PageCont__3213E83F97BC5DD6");
+            entity.HasKey(e => e.Id).HasName("PK__PageCont__3213E83FD84DA4F8");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Content)
@@ -393,12 +396,12 @@ public partial class TaxiContext : DbContext
 
             entity.HasOne(d => d.Page).WithMany(p => p.PageContents)
                 .HasForeignKey(d => d.PageId)
-                .HasConstraintName("FK__PageConte__page___6477ECF3");
+                .HasConstraintName("FK__PageConte__page___778AC167");
         });
 
         modelBuilder.Entity<PaymentHistory>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__PaymentH__3213E83FF6E4ABE3");
+            entity.HasKey(e => e.Id).HasName("PK__PaymentH__3213E83FC0B7E1EB");
 
             entity.ToTable("PaymentHistory");
 
@@ -424,12 +427,12 @@ public partial class TaxiContext : DbContext
 
             entity.HasOne(d => d.Driver).WithMany(p => p.PaymentHistories)
                 .HasForeignKey(d => d.DriverId)
-                .HasConstraintName("FK__PaymentHi__drive__693CA210");
+                .HasConstraintName("FK__PaymentHi__drive__7C4F7684");
         });
 
         modelBuilder.Entity<Province>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Province__3213E83FC869C08A");
+            entity.HasKey(e => e.Id).HasName("PK__Province__3213E83F6624EBA1");
 
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
@@ -455,7 +458,7 @@ public partial class TaxiContext : DbContext
 
         modelBuilder.Entity<Review>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Reviews__3213E83F472DCD5A");
+            entity.HasKey(e => e.Id).HasName("PK__Reviews__3213E83FAA32713C");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.BookingDetailId).HasColumnName("booking_detail_id");
@@ -477,12 +480,12 @@ public partial class TaxiContext : DbContext
 
             entity.HasOne(d => d.BookingDetail).WithMany(p => p.Reviews)
                 .HasForeignKey(d => d.BookingDetailId)
-                .HasConstraintName("FK__Reviews__booking__5812160E");
+                .HasConstraintName("FK__Reviews__booking__6B24EA82");
         });
 
         modelBuilder.Entity<Taxy>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Taxies__3213E83F3A82DCB2");
+            entity.HasKey(e => e.Id).HasName("PK__Taxies__3213E83F03F203A6");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreatedAt)
@@ -510,12 +513,12 @@ public partial class TaxiContext : DbContext
 
             entity.HasOne(d => d.Driver).WithMany(p => p.Taxies)
                 .HasForeignKey(d => d.DriverId)
-                .HasConstraintName("FK__Taxies__driver_i__300424B4");
+                .HasConstraintName("FK__Taxies__driver_i__4316F928");
         });
 
         modelBuilder.Entity<Ward>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Wards__3213E83F7CD2CD72");
+            entity.HasKey(e => e.Id).HasName("PK__Wards__3213E83FE9EFA982");
 
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
@@ -538,7 +541,7 @@ public partial class TaxiContext : DbContext
 
             entity.HasOne(d => d.District).WithMany(p => p.Wards)
                 .HasForeignKey(d => d.DistrictId)
-                .HasConstraintName("FK__Wards__district___412EB0B6");
+                .HasConstraintName("FK__Wards__district___5441852A");
         });
 
         OnModelCreatingPartial(modelBuilder);

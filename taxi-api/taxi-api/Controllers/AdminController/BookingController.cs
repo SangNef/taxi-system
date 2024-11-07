@@ -136,9 +136,6 @@ namespace taxi_api.Controllers.AdminController
                 message = "Successfully retrieved the list of trips."
             });
         }
-
-
-
         [HttpPost("store")]
         public async Task<IActionResult> Store([FromBody] BookingRequestDto request)
         {
@@ -157,17 +154,17 @@ namespace taxi_api.Controllers.AdminController
 
             if (!string.IsNullOrEmpty(request.Name) && !string.IsNullOrEmpty(request.Phone))
             {
-                customer = await _context.Customers.FirstOrDefaultAsync(c => c.Phone == request.Phone);
-                if (customer != null)
-                {
-                    return BadRequest(new
-                    {
-                        code = CommonErrorCodes.InvalidData,
-                        data = (object)null,
-                        message = "Phone number already exists!"
-                    });
-                }
-                else
+                //customer = await _context.Customers.FirstOrDefaultAsync(c => c.Phone == request.Phone);
+                //if (customer != null)
+                //{
+                //    return BadRequest(new
+                //    {
+                //        code = CommonErrorCodes.InvalidData,
+                //        data = (object)null,
+                //        message = "Phone number already exists!"
+                //    });
+                //}
+                //else
                 {
                     customer = new Customer
                     {
@@ -244,7 +241,7 @@ namespace taxi_api.Controllers.AdminController
                 Code = "XG" + DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 CustomerId = customer.Id,
                 ArivalId = arival.Id,
-                StartAt = request.StartTime,
+                StartAt = DateTime.UtcNow,
                 EndAt = null,
                 Count = request.Count,
                 Price = request.Price,
@@ -256,15 +253,15 @@ namespace taxi_api.Controllers.AdminController
             await _context.Bookings.AddAsync(booking);
             await _context.SaveChangesAsync();
 
+            
             var taxi = await FindDriverHelper.FindDriver(booking.Id, 0, _context);
 
             if (taxi == null)
             {
-                return BadRequest(new
+                return Ok(new
                 {
                     code = CommonErrorCodes.InvalidData,
-                    data = (object)null,
-                    message = "No suitable driver found."
+                    message = "Wait for the driver to accept this trip!"
                 });
             }
 
