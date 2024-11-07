@@ -144,7 +144,7 @@ namespace taxi_api.Controllers.UserController
                 {
                     code = CommonErrorCodes.InvalidData,
                     data = response.data,
-                    message = "Chuyến đi này chưa có tài xế."
+                    message = "This trip does not have a driver."
                 };
             }
 
