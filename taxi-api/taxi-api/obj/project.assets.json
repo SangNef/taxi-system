@@ -8108,6 +8108,7 @@
       "projectPath": "C:\\Users\\admin\\Desktop\\Project\\Taxi-net\\taxi-api\\taxi-api\\taxi-api.csproj",
       "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\admin\\Desktop\\Project\\Taxi-net\\taxi-api\\taxi-api\\obj\\",
+
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",

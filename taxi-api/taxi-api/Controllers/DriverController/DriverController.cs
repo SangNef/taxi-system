@@ -10,9 +10,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using taxi_api.DTO;
 using taxi_api.Models;
 using taxi_api.Helpers;
+using taxi_api.DTO;
 
 namespace taxi_api.Controllers.DriverController
 {
@@ -53,7 +53,7 @@ namespace taxi_api.Controllers.DriverController
                 Phone = driverDto.Phone,
                 Password = _passwordHasher.HashPassword(null, driverDto.Password),
                 IsActive = false,
-                IsDelete = false,
+                DeletedAt = null,
                 Point = 0,
                 Commission = 0,
                 CreatedAt = DateTime.Now,
@@ -63,8 +63,7 @@ namespace taxi_api.Controllers.DriverController
             _context.Drivers.Add(newDriver);
             _context.SaveChanges();
 
-            var token = GenerateJwtToken(newDriver);
-            return Ok(new { code = CommonErrorCodes.Success, message = "Register Driver Successfully", data = new { token } });
+            return Ok(new { code = CommonErrorCodes.Success, message = "Register Driver Successfully , please waiting for custommer support active account for moment !" });
         }
 
         [HttpPost("login")]
@@ -73,7 +72,11 @@ namespace taxi_api.Controllers.DriverController
             if (loginDto == null)
                 return BadRequest(new { code = CommonErrorCodes.InvalidData, message = "Invalid login data." });
 
-            var driver = _context.Drivers.FirstOrDefault(d => d.Phone == loginDto.Phone);
+            // Sử dụng Include để lấy dữ liệu taxies
+            var driver = _context.Drivers
+                .Include(d => d.Taxies)  // Bao gồm taxies liên quan đến driver
+                .FirstOrDefault(d => d.Phone == loginDto.Phone);
+
             if (driver == null)
                 return NotFound(new { code = CommonErrorCodes.NotFound, message = "Driver does not exist." });
 
@@ -84,56 +87,53 @@ namespace taxi_api.Controllers.DriverController
             if (driver.IsActive != true)
                 return Unauthorized(new { code = CommonErrorCodes.Unauthorized, message = "Driver account is not activated." });
 
-            if (driver.IsDelete == true)
+            if (driver.DeletedAt != null)
                 return Unauthorized(new { code = CommonErrorCodes.Unauthorized, message = "Your account is locked. Please contact customer support." });
 
-            // Check if the driver has an assigned vehicle
-            var taxi = _context.Taxies.FirstOrDefault(t => t.DriverId == driver.Id && t.DeletedAt == null);
-            if (taxi == null)
+            // Tạo responseData với thông tin từ driver
+            var responseData = new
             {
-                return Unauthorized(new { code = CommonErrorCodes.Unauthorized, message = "Driver has no vehicle assigned." });
-            }
+                driver = new
+                {
+                    driver.Id,
+                    driver.Fullname,
+                    driver.Phone,
+                    driver.IsActive,
+                    driver.Point,
+                    driver.Commission,
+                    driver.CreatedAt,
+                    driver.UpdatedAt,
+                    Taxies = driver.Taxies.Select(t => new
+                    {
+                        t.DriverId,
+                        t.Name,
+                        t.LicensePlate,
+                        t.Seat,
+                        t.InUse,
+                        t.CreatedAt,
+                        t.UpdatedAt
+                    }).ToList()
+                }
+            };
 
-            var token = GenerateJwtToken(driver);
-            var refreshToken = GenerateRefreshToken();
-            _cache.Set(driver.Id.ToString(), refreshToken, TimeSpan.FromDays(1));
+            var token = GenerateJwtToken(responseData.driver);
+            _cache.Set(driver.Id.ToString(), TimeSpan.FromDays(1));
 
-            return Ok(new { code = CommonErrorCodes.Success, message = "Driver logged in successfully.", data = new { token, refreshToken } });
+            return Ok(new { code = CommonErrorCodes.Success, message = "Driver logged in successfully.", data = token });
         }
 
-        [HttpPost("refresh-token")]
-        public IActionResult RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenRequest)
-        {
-            if (refreshTokenRequest == null)
-                return BadRequest(new { code = CommonErrorCodes.InvalidData, message = "Invalid client request." });
-
-            if (!_cache.TryGetValue(refreshTokenRequest.RefreshToken, out string driverId))
-                return Unauthorized(new { code = CommonErrorCodes.Unauthorized, message = "Invalid or expired refresh token." });
-
-            var driver = _context.Drivers.FirstOrDefault(d => d.Id.ToString() == driverId);
-            if (driver == null)
-                return NotFound(new { code = CommonErrorCodes.NotFound, message = "Driver not found." });
-
-            var newToken = GenerateJwtToken(driver);
-            var newRefreshToken = GenerateRefreshToken();
-
-            _cache.Set(driver.Id.ToString(), newRefreshToken, TimeSpan.FromDays(1));
-
-            return Ok(new { token = newToken, refreshToken = newRefreshToken });
-        }
-
-        private string GenerateJwtToken(Driver driver)
+        private string GenerateJwtToken(dynamic driverData) 
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, driver.Fullname),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("Phone", driver.Phone ?? ""),
-                new Claim("DriverId", driver.Id.ToString())
-            };
+        new Claim(JwtRegisteredClaimNames.Sub, driverData.Fullname),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        new Claim("Phone", driverData.Phone ?? ""),
+        new Claim("DriverId", driverData.Id.ToString()),
+    };
 
             var token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
@@ -143,6 +143,7 @@ namespace taxi_api.Controllers.DriverController
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
 
         private string GenerateRefreshToken()
         {
@@ -290,6 +291,21 @@ namespace taxi_api.Controllers.DriverController
             }).ToList();
 
             return Ok(new { code = CommonErrorCodes.Success, message = "Successfully retrieved assigned trips.", data = result });
+        }
+        [HttpPut("edit-commission/{driverId}")]
+        public async Task<IActionResult> EditCommission(int driverId, [FromBody] CommissionUpdateDto commissionDto)
+        {
+            var driver = await _context.Drivers.FindAsync(driverId);
+            if (driver == null)
+            {
+                return NotFound(new { code = CommonErrorCodes.NotFound, message = "Driver not found." });
+            }
+
+            driver.UpdatedAt = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { code = CommonErrorCodes.Success, message = "Commission updated successfully.", data = driver });
         }
 
     }
