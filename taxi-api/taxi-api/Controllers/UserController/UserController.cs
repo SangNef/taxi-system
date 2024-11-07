@@ -150,11 +150,8 @@ namespace taxi_api.Controllers.UserController
 
             return Ok(response);
         }
-<<<<<<< HEAD
-=======
 
 
->>>>>>> 55b83475cc2af5dfe5d7ce8ea44bb120972036dc
         private string MaskPhoneNumber(string phoneNumber)
         {
             if (string.IsNullOrEmpty(phoneNumber) || phoneNumber.Length < 7)
@@ -162,12 +159,6 @@ namespace taxi_api.Controllers.UserController
 
             return phoneNumber.Substring(0, 4) + "xxx" + phoneNumber.Substring(phoneNumber.Length - 3);
         }
-<<<<<<< HEAD
-
-
-
-=======
->>>>>>> 55b83475cc2af5dfe5d7ce8ea44bb120972036dc
         [HttpGet("search-location")]
         public async Task<IActionResult> GetWardInfoByName([FromQuery] string wardName)
         {

@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace taxi_api.Controllers.AdminController
 {
-    [Route("api/[controller]")]
+    [Route("api/admin")]
     [ApiController]
     public class AdminController : ControllerBase
     {
@@ -67,17 +67,13 @@ namespace taxi_api.Controllers.AdminController
             }
 
             var token = GenerateJwtToken(admin);
-            var refreshToken = GenerateRefreshToken();
-
-            _cache.Set(refreshToken, admin.Email, TimeSpan.FromMinutes(30));
 
             return Ok(new
             {
                 code = CommonErrorCodes.Success,
                 data = new
                 {
-                    token,
-                    refreshToken
+                    token
                 },
                 message = "Admin logged in successfully."
             });
