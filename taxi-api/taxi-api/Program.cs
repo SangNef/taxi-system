@@ -117,7 +117,8 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    SeederAdmin.Initialize(services);  // Initialize SeederAdmin for data seeding
+    SeederAdmin.Initialize(services); 
+    ConfigSeeder.Initialize(services);
 }
 
 app.Run();
