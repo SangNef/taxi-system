@@ -16,10 +16,6 @@ namespace taxi_api.DTO
         [Required(ErrorMessage = "Type is required.")]
         public string Types { get; set; } 
 
-        [Required(ErrorMessage = "Price is required.")]
-        [Range(0, double.MaxValue, ErrorMessage = "Price must be a positive number.")]
-        public decimal Price { get; set; }
-
         [Required(ErrorMessage ="Start At is required")] 
         public DateOnly? StartAt { get; set; }
         public int? PickUpId { get; set; }

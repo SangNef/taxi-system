@@ -48,7 +48,7 @@ public partial class TaxiContext : DbContext
     public virtual DbSet<Ward> Wards { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Data Source=SANGPC\\SANG;Initial Catalog=taxi;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
+        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-UJTQBIQ\\HUUDAO;Initial Catalog=taxi;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
