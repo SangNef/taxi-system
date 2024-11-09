@@ -2,35 +2,55 @@ import React, { useState } from "react";
 import { PhoneIcon, GlobeAltIcon } from "@heroicons/react/24/outline";
 import logo from "../assets/logo.png";
 import Form from "./form";
+import { useTranslation } from "react-i18next";
+import { Dropdown, Menu } from "antd";
+
+import viFlag from "../assets/vi-flag.png";
+import enFlag from "../assets/en-flag.png";
 
 const Header = () => {
   const [selectedSlug, setSelectedSlug] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const { t, i18n } = useTranslation();
 
   const handleSelectedSlug = (slug) => {
     setSelectedSlug(slug);
     setShowForm(true);
   };
 
+  const handleLanguageChange = ({ key }) => {
+    i18n.changeLanguage(key);
+    localStorage.setItem("language", key);
+  };
+
+  const languageMenu = (
+    <Menu onClick={handleLanguageChange}>
+      <Menu.Item key="vi">
+        <img src={viFlag} alt="Vietnamese flag" className="inline w-6 h-6 mr-2 object-cover rounded-full" />
+        Tiếng Việt
+      </Menu.Item>
+      <Menu.Item key="en">
+        <img src={enFlag} alt="English flag" className="inline w-6 h-6 mr-2 object-cover rounded-full" />
+        English
+      </Menu.Item>
+    </Menu>
+  );
+
   const menus = [
     {
-      name: "Xe ghép",
+      name: t("header.1"),
       slug: "#xe-ghep",
     },
     {
-      name: "Bao xe",
+      name: t("header.2"),
       slug: "#bao-xe",
     },
     {
-      name: "Đi sân bay",
+      name: t("header.3"),
       slug: "#di-san-bay",
     },
     {
-      name: "Đi tỉnh",
-      slug: "#di-tinh",
-    },
-    {
-      name: "Tra cứu",
+      name: t("header.4"),
       slug: "#tra-cuu",
     },
   ];
@@ -46,10 +66,12 @@ const Header = () => {
               <PhoneIcon className="h-5 w-5" />
               <span>0123456789</span>
             </a>
-            <button className="flex items-center space-x-1 text-gray-700 hover:text-gray-900">
-              <GlobeAltIcon className="h-5 w-5" />
-              <span>VN</span>
-            </button>
+            <Dropdown overlay={languageMenu} trigger={['click']}>
+              <button className="flex items-center space-x-1 text-gray-700 hover:text-gray-900">
+                <GlobeAltIcon className="h-5 w-5" />
+                <span>{i18n.language.toUpperCase()}</span>
+              </button>
+            </Dropdown>
           </div>
         </div>
         <nav className="w-full flex justify-end px-[20%] bg-[#FF9900] h-20 items-center">

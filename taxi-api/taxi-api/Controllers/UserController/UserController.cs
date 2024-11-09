@@ -307,7 +307,7 @@ namespace taxi_api.Controllers.UserController
                 Code = "XG" + DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 CustomerId = customer.Id,
                 ArivalId = arival.Id,
-                StartAt = DateTime.UtcNow,
+                //StartAt = DateTime.UtcNow,
                 EndAt = null,
                 Count = request.Count,
                 Price = request.Price,

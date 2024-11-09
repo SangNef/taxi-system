@@ -222,7 +222,7 @@ namespace taxi_api.Controllers.DriverController
                 Code = "XG" + DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 CustomerId = customer.Id,
                 ArivalId = arival.Id,
-                StartAt = request.StartTime,
+                //StartAt = request.StartTime,
                 EndAt = null,
                 Count = request.Count,
                 Price = request.Price,

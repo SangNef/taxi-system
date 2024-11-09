@@ -24,7 +24,6 @@ public partial class Driver
     public DateTime? CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
-
     public DateTime? DeletedAt { get; set; }
 
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();

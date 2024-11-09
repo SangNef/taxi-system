@@ -49,7 +49,7 @@ namespace taxi_api.Helpers
                         .Include(bd => bd.Booking)
                         .Where(bd => bd.TaxiId == taxi.Id &&
                                      bd.Booking.StartAt.HasValue &&
-                                     bd.Booking.StartAt.Value.Date == bookingStartDate.Value.Date &&
+                                     //bd.Booking.StartAt.Value.Date == bookingStartDate.Value.Date &&
                                      bd.Booking.Arival != null &&
                                      bd.Booking.Arival.DropOffId == dropOffId &&
                                      bd.Booking.Arival.Type == type) // Kiểm tra điều kiện type và dropOffId

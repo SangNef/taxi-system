@@ -328,7 +328,7 @@ namespace taxi_api.Controllers.DriverController
 
             // Bước 8: Tính toán tổng giá tiền
             bookingDetail.Commission = commission;
-            bookingDetail.TotalPrice = booking.Price - (commission * booking.Price / 100);
+            //bookingDetail.TotalPrice = booking.Price - (commission * booking.Price / 100);
 
             // Bước 9: Thêm BookingDetail vào cơ sở dữ liệu
             await _context.BookingDetails.AddAsync(bookingDetail);
