@@ -68,7 +68,6 @@ public partial class TaxiContext : DbContext
             entity.Property(e => e.Email)
                 .HasMaxLength(255)
                 .HasColumnName("email");
-            entity.Property(e => e.IsDelete).HasColumnName("is_delete");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
@@ -153,6 +152,7 @@ public partial class TaxiContext : DbContext
             entity.Property(e => e.Price)
                 .HasColumnType("decimal(18, 2)")
                 .HasColumnName("price");
+            entity.Property(e => e.StartAt).HasColumnName("start_at");
             entity.Property(e => e.StartAt).HasColumnName("start_at");
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
@@ -299,7 +299,6 @@ public partial class TaxiContext : DbContext
             entity.Property(e => e.IsActive)
                 .HasDefaultValue(true)
                 .HasColumnName("is_active");
-            entity.Property(e => e.IsDelete).HasColumnName("is_delete");
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .HasColumnName("password");

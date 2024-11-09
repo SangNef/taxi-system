@@ -15,8 +15,6 @@ public partial class Driver
 
     public bool? IsActive { get; set; }
 
-    public bool? IsDelete { get; set; }
-
     public int? Point { get; set; }
 
     public int? Commission { get; set; }

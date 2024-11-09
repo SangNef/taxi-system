@@ -26,7 +26,6 @@ namespace taxi_api.Controllers.AdminController
                      d.Fullname,
                      d.Phone,
                      d.IsActive,
-                     d.IsDelete,
                      d.Point,
                      d.Commission,
                      d.CreatedAt,
@@ -67,8 +66,23 @@ namespace taxi_api.Controllers.AdminController
                 });
             }
 
-            // Activate the driver
+            // Get the default commission from the Config table
+            var defaultCommissionConfig = _context.Configs
+                .FirstOrDefault(c => c.ConfigKey == "default_comission");
+
+            if (defaultCommissionConfig == null)
+            {
+                return StatusCode(500, new
+                {
+                    code = CommonErrorCodes.ServerError,
+                    data = (object)null,
+                    message = "Default commission configuration not found."
+                });
+            }
+
+            // Activate the driver and set the default commission
             driver.IsActive = true;
+            driver.Commission = int.Parse(defaultCommissionConfig.Value);
             _context.SaveChanges();
 
             return Ok(new
@@ -78,6 +92,8 @@ namespace taxi_api.Controllers.AdminController
                 message = "Driver account activated successfully."
             });
         }
+
+
         [HttpPost("BanDriver/{driverId}")]
         public IActionResult BanDriver(int driverId)
         {

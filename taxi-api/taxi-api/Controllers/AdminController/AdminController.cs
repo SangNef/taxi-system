@@ -11,6 +11,7 @@ using taxi_api.DTO;
 using taxi_api.Models;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
 
 namespace taxi_api.Controllers.AdminController
 {
@@ -20,14 +21,14 @@ namespace taxi_api.Controllers.AdminController
     {
         private readonly TaxiContext _context;
         private readonly IPasswordHasher<Admin> _passwordHasher;
-        private readonly IConfiguration _config;
+        private readonly IConfiguration configuation;
         private readonly IMemoryCache _cache;
 
-        public AdminController(TaxiContext context, IPasswordHasher<Admin> passwordHasher, IConfiguration config, IMemoryCache cache)
+        public AdminController(TaxiContext context, IPasswordHasher<Admin> passwordHasher, IConfiguration configuation, IMemoryCache cache)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
-            _config = config;
+            this.configuation = configuation;
             _cache = cache;
         }
 
@@ -39,75 +40,82 @@ namespace taxi_api.Controllers.AdminController
                 return BadRequest(new
                 {
                     code = CommonErrorCodes.InvalidData,
-                    data = (object)null,
                     message = "Invalid login data."
                 });
             }
 
+            // Find admin by email (or you may use a different unique identifier)
             var admin = _context.Admins.FirstOrDefault(a => a.Email == loginDto.Email);
             if (admin == null)
             {
                 return NotFound(new
                 {
                     code = CommonErrorCodes.NotFound,
-                    data = (object)null,
                     message = "Admin not found."
                 });
             }
 
+            // Verify hashed password
             var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(admin, admin.Password, loginDto.Password);
             if (passwordVerificationResult == PasswordVerificationResult.Failed)
             {
                 return Unauthorized(new
                 {
                     code = CommonErrorCodes.Unauthorized,
-                    data = (object)null,
                     message = "Invalid password."
+                });
+            }          
+            // Check if the account is locked (if `DeletedAt` indicates account status)
+            if (admin.DeletedAt != null)
+            {
+                return Unauthorized(new
+                {
+                    code = CommonErrorCodes.Unauthorized,
+                    message = "Your account is locked. Please contact support."
                 });
             }
 
-            var token = GenerateJwtToken(admin);
+            // Define response data for the admin
+            var responseData = new
+            {
+                admin.Id,
+                admin.Email,
+                admin.CreatedAt,
+                admin.UpdatedAt
+            };
 
+            var responseDataJson = JsonSerializer.Serialize(responseData);
+
+            // Create claims with additional response data
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, admin.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("AdminId", admin.Id.ToString()),
+                new Claim("Email", admin.Email ?? ""),
+                new Claim("ResponseData", responseDataJson)
+            };
+
+            // Generate JWT token
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuation["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(
+                issuer: configuation["Jwt:Issuer"],
+                audience: configuation["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddHours(30),
+                signingCredentials: creds);
+
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
             return Ok(new
             {
                 code = CommonErrorCodes.Success,
+                message = "Admin logged in successfully.",
                 data = new
                 {
-                    token
+                    token = tokenString
                 },
-                message = "Admin logged in successfully."
             });
-        }
-
-        private string GenerateJwtToken(Admin admin)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, admin.Name),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("Email", admin.Email ?? ""),
-            };
-
-            var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(120),
-                signingCredentials: credentials);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private string GenerateRefreshToken()
-        {
-            var randomNumber = new byte[32];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(randomNumber);
-                return Convert.ToBase64String(randomNumber);
-            }
         }
         [HttpGet("get-all-taxis")]
         public async Task<IActionResult> GetAllTaxis()

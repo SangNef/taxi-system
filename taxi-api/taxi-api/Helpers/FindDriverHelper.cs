@@ -68,8 +68,7 @@ namespace taxi_api.Helpers
             {
                 validDrivers = drivers.Where(d => !context.BookingDetails
                     .Any(bd => bd.TaxiId == d.Taxies.FirstOrDefault().Id &&
-                               bd.Booking.StartAt.HasValue &&
-                               bd.Booking.StartAt.Value.Date == bookingStartDate.Value.Date)).ToList();
+                               bd.Booking.StartAt == bookingStartDate)).ToList();
             }
 
             if (!validDrivers.Any())
@@ -81,7 +80,7 @@ namespace taxi_api.Helpers
                     Status = "0",
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
-                    Commission = 0 
+                    Commission = 0
                 };
 
                 await context.BookingDetails.AddAsync(bookingDetail);
